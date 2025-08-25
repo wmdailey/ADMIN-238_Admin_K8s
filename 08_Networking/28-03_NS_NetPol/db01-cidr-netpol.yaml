@@ -1,0 +1,34 @@
+# Exercise 28-03 v3.2.0
+#
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: db01-netpol
+  namespace: db-ns
+spec:
+  podSelector:
+    matchLabels:
+      tier: database
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress: 
+    - from:
+      - podSelector:
+          matchLabels:
+            tier: backend
+      ports:
+        - protocol: TCP
+          port: 6379
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            env: prd 
+  egress:
+    - to:
+      - ipBlock:
+          cidr:  "10.244.0.0/16" 
+      ports:
+       - protocol: TCP
+         port: 80

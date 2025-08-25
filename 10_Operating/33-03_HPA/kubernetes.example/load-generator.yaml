@@ -1,0 +1,21 @@
+# Example: kubernetes.io
+# Load Generator
+apiversion: apps/v1
+kind: Deployment
+metadata:
+  name: load-generator
+spec:
+  selector:
+    matchLabels:
+      run: load-generator
+  relicas: 2
+  template:
+    metadata:
+      labels:
+        run: load-generator
+    spec:
+      containers:
+        - name: load-generator
+          image: busybox
+          args: [/bin/sh, -c, 'while true, do wget -q -o- http://php-apache; done']
+          resources: {}

@@ -1,0 +1,31 @@
+# Exercise 27-04 v3.2.0
+#
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: webstore-ing
+  namespace: webstore-ns
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: order.webstore.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: webstore-order-svc
+            port:
+              number: 80
+  - host: video.webstore.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: webstore-video-svc
+            port:
+              number: 80

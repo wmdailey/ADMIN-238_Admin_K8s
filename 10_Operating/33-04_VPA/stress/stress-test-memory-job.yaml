@@ -1,0 +1,40 @@
+# Exercise: 33-04 v3.2.0
+#
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: stress-test-memory
+spec:
+  template:
+    spec:
+      containers:
+        - name: k6
+          # Using the official k6 Docker image.
+          image: grafana/k6:latest
+          imagePullPolicy: Always
+          # The command to execute the test script inside the container.
+          # We pass the URL as an environment variable to the k6 script.
+          command: ["k6", "run", "/scripts/stress-test-memory.js"]
+          env:
+            - name: TARGET_URL
+              value: "http://test-memory.default.svc.cluster.local:8080/test-memory?mb=100"
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "100Mi"
+            limits:
+              cpu: "100m"
+              memory: "200Mi"
+          # Mount the ConfigMap as a volume so the script is available.
+          volumeMounts:
+            - name: scripts-vol
+              mountPath: /scripts/stress-test-memory.js
+              subPath: stress-test-memory.js
+      # Define the volume from the ConfigMap.
+      volumes:
+        - name: scripts-vol
+          configMap:
+            name: stress-test-memory
+      restartPolicy: Never
+  backoffLimit: 4

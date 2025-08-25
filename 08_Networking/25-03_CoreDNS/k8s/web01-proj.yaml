@@ -1,0 +1,51 @@
+# Exercise 25-03 v3.2.0
+#
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: prdstore-ns
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web01-deploy
+  namespace: prdstore-ns
+  labels:
+    app: store-app 
+    tier: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      pod: web01-pod
+  template:
+    metadata:
+      labels:
+        pod: web01-pod
+    spec:
+      containers:
+        - name: web-app
+          image: nginx:1.24
+          ports:
+            - name: http 
+              containerPort: 80
+              protocol: TCP
+          resources: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web01-svc
+  namespace: prdstore-ns
+  labels:
+    app: store-app
+    tier: frontend
+spec:
+  selector:
+    pod: web01-pod
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 80

@@ -1,0 +1,24 @@
+# Exercise 26-05 v3.2.0
+#
+---
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: edu-dashboard
+nodes:
+- role: control-plane
+  kubeadmConfigPatches:
+  - |
+    kind: InitConfiguration
+    nodeRegistration:
+      kubeletExtraArgs:
+        node-labels: "ingress-ready=true"
+  # The Kubernetes Dashboard uses port 8001, configure a NodePort service
+  # using port 30001 to create connectivity without port forwarding.
+  extraPortMappings:
+  - containerPort: 30001
+    hostPort: 8001 
+    listenAddress: 127.0.0.1
+    protocol: TCP
+- role: worker
+- role: worker
+- role: worker

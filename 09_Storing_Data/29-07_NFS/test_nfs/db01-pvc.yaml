@@ -1,0 +1,14 @@
+# Exercise 28-7 v1.2.0
+#
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: db01-pvc
+spec:
+  storageClassName: managed-nfs-storage # Sets default
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Mi

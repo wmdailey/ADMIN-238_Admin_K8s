@@ -1,0 +1,40 @@
+#vpa-memory-tester.yaml
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: test-memory
+spec:
+  # The targetRef defines which pods the VPA will manage.
+  # This VPA will target the Deployment named 'test-memory'
+  targetRef:
+    apiVersion: "apps/v1"
+    kind:       Deployment
+    name:       test-memory
+  
+  # The updateMode determines how the VPA applies resource recommendations.
+  # "Auto" means the VPA will automatically apply new requests and limits
+  # by evicting and recreating the pod.
+  updatePolicy:
+    updateMode: "Auto"
+
+  # The resourcePolicy defines the VPA's behavior for specific containers.
+  # You can customize the behavior per container within the target pod.
+  resourcePolicy:
+    containerPolicies:
+      - containerName: "memory-tester"
+        # The VPA can provide recommendations for both CPU and memory.
+        controlledResources: ["cpu", "memory"]
+        # The VPA can be configured to manage both resource "requests" and "limits".
+        controlledValues: RequestsAndLimits
+        
+        # minAllowed and maxAllowed set hard boundaries on the VPA's recommendations.
+        # This prevents the VPA from setting resource requests and limits that are
+        # either too small (which could cause performance issues) or too large (which
+        # could impact cluster scheduling).
+        minAllowed:
+          cpu: "100m"
+          memory: "100Mi"
+        maxAllowed:
+          cpu: "1000m"
+          memory: "1Gi"
+

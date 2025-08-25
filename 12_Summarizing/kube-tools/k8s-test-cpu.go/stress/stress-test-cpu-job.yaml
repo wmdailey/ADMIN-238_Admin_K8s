@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: stress-test-cpu
+spec:
+  template:
+    spec:
+      containers:
+      - name: k6-runner
+        image: grafana/k6:latest
+        command: ["k6", "run", "/scripts/stress-test-cpu.js"]
+        resources:
+          # Request and limit are important for a CPU-intensive test.
+          # The high limit ensures the container is not throttled.
+          requests:
+            cpu: "200m"
+            memory: "60Mi"
+          limits:
+            cpu: "500m"
+            memory: "2Gi"
+        volumeMounts:
+        - name: scripts-vol
+          mountPath: /scripts/stress-test-cpu.js
+          subPath: stress-test-cpu.js
+      restartPolicy: Never
+      volumes:
+      - name: scripts-vol 
+        configMap:
+          name: stress-test-cpu 
+  backoffLimit: 4

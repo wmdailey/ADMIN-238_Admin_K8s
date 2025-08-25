@@ -1,0 +1,51 @@
+// Exercise 33-04 v3.2.0
+//
+// This k6 script performs a spike test on the memory-perf-tst-spike application.
+// A spike test is used to test the system's behavior under sudden, intense load.
+
+import http from 'k6/http';
+import { check, sleep } from 'k6';
+
+// Define the test options. This configuration creates a sharp spike in VUs.
+export let options = {
+  // Use a 'ramping-vus' executor to quickly increase users.
+  scenarios: {
+    spike_scenario: {
+      executor: 'ramping-vus',
+      // Start with 0 users.
+      startVUs: 0,
+      // Stages define the load profile.
+      stages: [
+        { duration: '10s', target: 500 }, // A rapid ramp up to 500 VUs in 10 seconds.
+        { duration: '30s', target: 500 }, // Stay at 500 VUs for 30 seconds to sustain the spike.
+        { duration: '10s', target: 0 },    // Ramp down to 0 VUs over 10 seconds.
+      ],
+      gracefulRampDown: '5s',
+    },
+  },
+  thresholds: {
+    // A high failure rate or long duration during a spike can indicate
+    // resource exhaustion, such as running out of memory.
+    'http_req_failed': ['rate<0.1'], // Allow for a higher failure rate (10%) during the spike.
+    'http_req_duration': ['p(95)<1000'], // Allow a longer response time (1s) for the 95th percentile.
+  },
+};
+
+// The default function is the entry point for each virtual user (VU).
+export default function () {
+  const url = 'http://localhost:8080/test-memory';
+
+  // Perform a GET request to the specified endpoint.
+  const res = http.get(url, {
+    tags: { name: 'MemorySpikeRequest' },
+  });
+
+  // Check if the response status is 200.
+  check(res, {
+    'is status 200': (r) => r.status === 200,
+  });
+
+  // A very short sleep to allow for a high request rate during the spike.
+  sleep(0.1); // Sleep for 100 milliseconds.
+}
+
