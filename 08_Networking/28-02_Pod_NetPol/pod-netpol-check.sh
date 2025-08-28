@@ -39,7 +39,7 @@ NS=db-ns
 APP_POD=app01-pod
 APP_NS=db-ns
 APP_IP=0.0.0.0
-APP_PORT=5000
+APP_PORT=3000
 DB_POD=db01-pod
 DB_NS=db-ns
 DB_IP=0.0.0.0
@@ -142,24 +142,40 @@ function port_check() {
 
   echo "Run Port check with netcat ..."
 
-	if kubectl -n $WEB_NS exec -it $WEB_POD -- nc -z -w $timeout $APP_IP $APP_PORT; then
-		echo "  Port check to FRONTEND $APP_POD in $APP_NS successful"
+	if kubectl -n $APP_NS exec -it $APP_POD -- nc -z -w $timeout $WEB_IP $WEB_PORT; then
+		echo "  Port check from FRONTEND $APP_POD to BACKEND $WEB_POD in $WEB_NS successful"
 	else
-		echo "  ERROR: Port check to FRONTEND $APP_POD failed or timed out"
+		echo "  ERROR: Port check from FRONTEND $APP_POD to BACKEND $WEB_POD failed or timed out"
+		return 1
+       fi
+
+#	if kubectl -n $APP_NS exec -it $APP_POD -- nc -z -w $timeout $DB_IP $DB_PORT; then
+#		echo "  Port check from FRONTEND $APP_POD to DATABASE $DB_POD in $DB_NS successful"
+#	else
+#		echo "  ERROR: Port check from FRONTEND $APP_POD to DATABASE $DB_POD failed or timed out"
+#		return 1
+#       fi
+
+	if kubectl -n $WEB_NS exec -it $WEB_POD -- nc -z -w $timeout $APP_IP $APP_PORT; then
+		echo "  Port check from BACKEND $WEB_POD to FRONTEND $APP_POD in $APP_NS successful" 
+	else
+		echo "  ERROR: Port check from BACKEND $WEB_POD to FRONTEND $APP_POD failed or timed out"
 		return 1
         fi
-	if kubectl -n $APP_NS exec -it $APP_POD -- nc -z -w $timeout $WEB_IP $WEB_PORT; then
-		echo "  Port check to BACKEND $WEB_POD in $WEB_NS successful"
+
+	if kubectl -n $WEB_NS exec -it $WEB_POD -- nc -z -w $timeout $DB_IP $DB_PORT; then
+		echo "  Port check from BACKEND $WEB_POD to DATABASE $DB_POD in $DB_NS successful" 
 	else
-		echo "  ERROR: Port check to BACKEND $WEB_POD failed or timed out"
+		echo "  ERROR: Port check from BACKEND $WEB_POD to DATABASE $DB_POD failed or timed out"
 		return 1
-       fi
-	if kubectl -n $APP_NS exec -it $APP_POD -- nc -z -w $timeout $DB_IP $DB_PORT; then
-		echo "  Port check to DATABASE $DB_POD in $DB_NS successful"
+        fi
+
+	if kubectl -n $DB_NS exec -it $DB_POD -- nc -z -w $timeout $WEB_IP $WEB_PORT; then
+		echo "  Port check from DATABASE $DB_POD to BACKEND $WEB_POD in $WEB_NS successful" 
 	else
-		echo "  ERROR: Port check to DATABASE $DB_POD failed or timed out"
+		echo "  ERROR: Port check from DATABASE $DB_POD to BACKEND $WEB_POD failed or timed out"
 		return 1
-       fi
+        fi
 }
 
 function install_package() {
@@ -189,28 +205,28 @@ function check_command_status() {
 
 function traffic_check_from_app() {
   echo
-  echo "* Check traffic from FRONTEND to BACKEND"
+  echo "* Check traffic from FRONTEND $APP_POD to BACKEND $WEB_POD"
   check_command_status kubectl -n $APP_NS exec $APP_POD -- sh -c "nc -w 1 $WEB_IP $WEB_PORT"
   echo
-  echo "* Check traffic from FRONTEND to DATABASE"
+  echo "* Check traffic from FRONTEND $APP_POD to DATABASE $WEB_POD"
   check_command_status kubectl -n $APP_NS exec $APP_POD -- sh -c "nc -w 1 $DB_IP $DB_PORT"
 }
 
 function traffic_check_from_web() {
   echo
-  echo "* Check traffic from BACKEND to FRONTEND"
+  echo "* Check traffic from BACKEND $WEB_POD to FRONTEND $APP_POD"
   check_command_status kubectl -n $WEB_NS exec $WEB_POD -- sh -c "nc -w 1 $APP_IP $APP_PORT"
   echo
-  echo "* Check traffic from BACKEND to DATABASE"
+  echo "* Check traffic from BACKEND $WEB_POD to DATABASE $DB_POD"
   check_command_status kubectl -n $WEB_NS exec $WEB_POD -- sh -c "nc -w 1 $DB_IP $DB_PORT"
 }
 
 function traffic_check_from_db() {
   echo
-  echo "* Check traffic from DATABASE to FRONTEND"
+  echo "* Check traffic from DATABASE $DB_POD to FRONTEND $APP_POD"
   check_command_status kubectl -n $DB_NS exec $DB_POD -- sh -c "nc -w 1 $APP_IP $APP_PORT"
   echo
-  echo "* Check traffic from DATABASE to BACKEND"
+  echo "* Check traffic from DATABASE $DB_POD to BACKEND $WEB_POD"
   check_command_status kubectl -n $DB_NS exec $DB_POD -- sh -c "nc -w 1 $WEB_IP $WEB_PORT"
 }
 
@@ -229,7 +245,8 @@ function run_option() {
                         port_check
                         ;;
 		-i | --install)
-			install_package
+#			install_package
+			echo "Disabled at this time, requires editing the install list"
 			;;
                 -t | --traffic)
 			extract_pod_ip

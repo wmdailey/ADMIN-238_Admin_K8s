@@ -172,36 +172,35 @@ function port_check() {
 	if kubectl -n $APP_NS exec -it $APP_POD -- nc -vz -w $timeout $W3B_IP $W3B_PORT; then
 		echo "  Port check from FRONTEND $APP_POD to BACKEND $W3B_POD in $W3B_NS successful"
 	else
-		echo "  ERROR: Port check from FRONTEND $APP_POD to BACKEND $W3B_POD failed or timed out"
+		echo "  ERROR: Port check FRONTEND $APP_POD to BACKEND $W3B_POD failed or timed out"
 		return 1
        fi
 
-
-	if kubectl -n $WEB_NS exec -it $WEB_POD -- nc -vz -w $timeout $DB_IP $DB_PORT; then
-		echo "  Port check from PRD BACKEND $WEB_POD to DATABASE $DB_POD in $DB_NS successful"
+	if kubectl -n $APP_NS exec -it $APP_POD -- nc -vz -w $timeout $DB_IP $DB_PORT; then
+		echo "  Port check from FRONTEND $APP_POD to DATABASE $DB_POD in $DB_NS successful"
 	else
-		echo "  ERROR: Port check from PRD BACKEND $WEB_POD to DATABASE $DB_POD failed or timed out"
+		echo "  ERROR: Port check from FRONTEND $APP_POD to DATABASE $DB_POD failed or timed out"
 		return 1
-        fi
-
-	if kubectl -n $W3B_NS exec -it $W3B_POD -- nc -vz -w $timeout $DB_IP $DB_PORT; then
-		echo "  Port check from DEV BACKEND $W3B_POD to DATABASE $DB_POD in $DB_NS successful"
-	else
-		echo "  ERROR: Port check from DEV BACKEND $W3B_POD to FRONTEND $APP_POD failed or timed out"
-		return 1
-        fi
-
-	if kubectl -n $DB_NS exec -it $DB_POD -- nc -vz -w $timeout $WEB_IP $WEB_PORT; then
- 		echo "  Port check from DATABASE $DB_POD to BACKEND $WEB_POD in $WEB_NS successful"
- 	else
- 		echo "  ERROR: Port check from DATABASE $DB_POD to BACKEND $WEB_POD failed or timed out"
- 		return 1
        fi
+
+	if kubectl -n $WEB_NS exec -it $WEB_POD -- nc -vz -w $timeout $APP_IP $APP_PORT; then
+		echo "  Port check from BACKEND $WEB_POD to FRONTEND $APP_POD in $APP_NS successful"
+	else
+		echo "  ERROR: Port check from BACKEND $WEB_POD to FRONTEND $APP_POD failed or timed out"
+		return 1
+        fi
 
 	if kubectl -n $DB_NS exec -it $DB_POD -- nc -vz -w $timeout $BAK_IP $BAK_PORT; then
 		echo "  Port check from DATABASE $DB_POD to BACKUP $BAK_POD in $BAK_NS successful"
 	else
 		echo "  ERROR: Port check from DAATABASE $DB_POD to BACKUP $BAK_POD failed or timed out"
+		return 1
+       fi
+
+	if kubectl -n $WEB_NS exec -it $WEB_POD -- nc -vz -w $timeout $APP_IP $APP_PORT; then
+		echo "  Port check to FRONTEND $APP_POD in $APP_NS successful"
+	else
+		echo "  ERROR: Port check to FRONTEND $APP_POD failed or timed out"
 		return 1
         fi
 }
@@ -233,44 +232,44 @@ function check_command_status() {
 
 function traffic_check_from_app() {
   echo
-  echo "* Check traffic from FRONTEND $APP_POD to BACKEND $WEB_POD"
+  echo "* Check traffic from FRONTEND to BACKEND"
   check_command_status kubectl -n $APP_NS exec $APP_POD -- sh -c "nc -w 1 $WEB_IP $WEB_PORT"
   echo
-  echo "* Check traffic from FRONTEND $APP_POD to DATABASE $DB_POD"
+  echo "* Check traffic from FRONTEND to DATABASE"
   check_command_status kubectl -n $APP_NS exec $APP_POD -- sh -c "nc -w 1 $DB_IP $DB_PORT"
 
   echo
-  echo "* Check traffic from FRONTEND $APP_POD to DEV BACKEND $W3B_POD"
+  echo "* Check traffic from FRONTEND to DEV BACKEND"
   check_command_status kubectl -n $APP_NS exec $APP_POD -- sh -c "nc -w 1 $W3B_IP $W3B_PORT"
 }
 
 function traffic_check_from_web() {
   echo
-  echo "* Check traffic from BACKEND $WEB_POD to FRONTEND $APP_POD"
+  echo "* Check traffic from BACKEND to FRONTEND"
   check_command_status kubectl -n $WEB_NS exec $WEB_POD -- sh -c "nc -w 1 $APP_IP $APP_PORT"
   echo
-  echo "* Check traffic from BACKEND $WEB_POD to DATABASE $DB_POD"
+  echo "* Check traffic from BACKEND to DATABASE"
   check_command_status kubectl -n $WEB_NS exec $WEB_POD -- sh -c "nc -w 1 $DB_IP $DB_PORT"
 }
 
 function traffic_check_from_w3b() {
   echo
-  echo "* Check traffic from DEV BACKEND $W3B_POD to FRONTEND $APP_POD"
+  echo "* Check traffic from DEV BACKEND to FRONTEND"
   check_command_status kubectl -n $W3B_NS exec $W3B_POD -- sh -c "nc -w 1 $APP_IP $APP_PORT"
   echo
-  echo "* Check traffic from DEV BACKEND $W3B_POD to DATABASE $DB_POD"
+  echo "* Check traffic from DEV BACKEND to DATABASE"
   check_command_status kubectl -n $W3B_NS exec $W3B_POD -- sh -c "nc -w 1 $DB_IP $DB_PORT"
 }
 
 function traffic_check_from_db() {
   echo
-  echo "* Check traffic from DATABASE $DB_POD to FRONTEND $APP_POD"
+  echo "* Check traffic from DATABASE to FRONTEND"
   check_command_status kubectl -n $DB_NS exec $DB_POD -- sh -c "nc -w 1 $APP_IP $APP_PORT"
   echo
-  echo "* Check traffic from DATABASE $DB_POD to BACKEND $WEB_POD"
+  echo "* Check traffic from DATABASE to BACKEND"
   check_command_status kubectl -n $DB_NS exec $DB_POD -- sh -c "nc -w 1 $WEB_IP $WEB_PORT"
   echo
-  echo "* Check traffic from DATABASE $DB_POD to BACKUP $BAC_POD"
+  echo "* Check traffic from DATABASE to BACKUP"
   check_command_status kubectl -n $DB_NS exec $DB_POD -- sh -c "nc -w 1 $BAK_IP $BAK_PORT"
 }
 
@@ -289,8 +288,7 @@ function run_option() {
                         port_check
                         ;;
 		-i | --install)
-#			install_package
-			echo "This option requires configuration"
+			install_package
 			;;
                 -t | --traffic)
 			extract_pod_ip
