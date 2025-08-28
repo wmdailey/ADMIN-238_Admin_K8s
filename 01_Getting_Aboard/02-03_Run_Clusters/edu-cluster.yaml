@@ -1,48 +1,14 @@
 # Exercise 02-03 v3.2.0
 #
+# A basic configuration file for a KIND cluster.
+# This creates a cluster with four nodes: one control plane and three workers.
+# The name of the cluster is edu.
 ---
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 name: edu
 nodes:
 - role: control-plane
-  kubeadmConfigPatches:
-  - |
-    kind: InitConfiguration
-    nodeRegistration:
-      kubeletExtraArgs:
-        node-labels: "ingress-ready=true"
-        system-reserved: "memory=2Gi"
-# These attributes map host ports to Node Ports
-# This class uses port-forwarding and Load Balancer
-#  extraPortMappings:
-#  - containerPort: 30080
-#    hostPort: 8080
-#    listenAddress: "127.0.0.1"
-#    protocol: TCP
-#  - containerPort: 30443
-#    hostPort: 8443
-#    listenAddress: "127.0.0.1"
-#    protocol: TCP
-# These attributes set the node memory
 - role: worker
-  kubeadmConfigPatches:
-  - |
-    kind: JoinConfiguration
-    nodeRegistration:
-      kubeletExtraArgs:
-        system-reserved: "memory=2Gi"
 - role: worker
-  kubeadmConfigPatches:
-  - |
-    kind: JoinConfiguration
-    nodeRegistration:
-      kubeletExtraArgs:
-        system-reserved: "memory=2Gi"
 - role: worker
-  kubeadmConfigPatches:
-  - |
-    kind: JoinConfiguration
-    nodeRegistration:
-      kubeletExtraArgs:
-        system-reserved: "memory=2Gi"
