@@ -15,13 +15,12 @@ spec:
     - Egress
   ingress: 
     - from:
+      - namespaceSelector:
+          matchLabels:
+            env: prd 
       - podSelector:
           matchLabels:
             tier: backend
       ports:
         - protocol: TCP
           port: 6379
-    - from:
-      - namespaceSelector:
-          matchLabels:
-            env: prd 

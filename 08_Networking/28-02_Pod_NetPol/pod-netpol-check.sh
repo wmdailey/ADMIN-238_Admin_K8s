@@ -1,4 +1,5 @@
 #!/bin/bash
+#
 # Copyright 2025 Cloudera, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -131,49 +132,49 @@ function extract_pod_ip() {
 
 function show_ip() {
 
-	echo "Run IP address check..."
-  	echo "  FRONTEND $APP_POD in $APP_NS has IP address $APP_IP"
-  	echo "  BACKEND $WEB_POD in $WEB_NS has IP address $WEB_IP"
-  	echo "  DATABASE $DB_POD in $DB_NS has IP address $DB_IP"
+	echo "Check IP addresses..."
+  	echo "  FRONTEND $APP_POD in $APP_NS IP address: $APP_IP"
+  	echo "  BACKEND  $WEB_POD in $WEB_NS IP address: $WEB_IP"
+  	echo "  DATABASE $DB_POD in $DB_NS IP address:  $DB_IP"
 }
 
 function port_check() {
-	local timeout=2
+	local timeout=1
 
-  echo "Run Port check with netcat ..."
+  echo "Check ports..."
 
-	if kubectl -n $APP_NS exec -it $APP_POD -- nc -z -w $timeout $WEB_IP $WEB_PORT; then
-		echo "  Port check from FRONTEND $APP_POD to BACKEND $WEB_POD in $WEB_NS successful"
+	if kubectl -n $APP_NS exec -it $APP_POD -- nc -w $timeout $WEB_IP $WEB_PORT; then
+		echo "  FRONTEND $APP_POD to BACKEND $WEB_POD in $WEB_NS:  OPEN"
 	else
-		echo "  ERROR: Port check from FRONTEND $APP_POD to BACKEND $WEB_POD failed or timed out"
+		echo "  ERROR: FRONTEND $APP_POD to BACKEND $WEB_POD: CLOSED or timed out"
 		return 1
        fi
 
-#	if kubectl -n $APP_NS exec -it $APP_POD -- nc -z -w $timeout $DB_IP $DB_PORT; then
-#		echo "  Port check from FRONTEND $APP_POD to DATABASE $DB_POD in $DB_NS successful"
+#	if kubectl -n $APP_NS exec -it $APP_POD -- nc -w $timeout $DB_IP $DB_PORT; then
+#		echo "  FRONTEND $APP_POD to DATABASE $DB_POD in $DB_NS: OPEN"
 #	else
-#		echo "  ERROR: Port check from FRONTEND $APP_POD to DATABASE $DB_POD failed or timed out"
+#		echo "  ERROR: FRONTEND $APP_POD to DATABASE $DB_POD: CLOSED or timed out"
 #		return 1
 #       fi
 
-	if kubectl -n $WEB_NS exec -it $WEB_POD -- nc -z -w $timeout $APP_IP $APP_PORT; then
-		echo "  Port check from BACKEND $WEB_POD to FRONTEND $APP_POD in $APP_NS successful" 
+	if kubectl -n $WEB_NS exec -it $WEB_POD -- nc -w $timeout $APP_IP $APP_PORT; then
+		echo "  BACKEND  $WEB_POD to FRONTEND $APP_POD in $APP_NS: OPEN" 
 	else
-		echo "  ERROR: Port check from BACKEND $WEB_POD to FRONTEND $APP_POD failed or timed out"
+		echo "  ERROR: BACKEND $WEB_POD to FRONTEND $APP_POD: CLOSED or timed out"
 		return 1
         fi
 
-	if kubectl -n $WEB_NS exec -it $WEB_POD -- nc -z -w $timeout $DB_IP $DB_PORT; then
-		echo "  Port check from BACKEND $WEB_POD to DATABASE $DB_POD in $DB_NS successful" 
+	if kubectl -n $WEB_NS exec -it $WEB_POD -- nc -w $timeout $DB_IP $DB_PORT; then
+		echo "  BACKEND  $WEB_POD to DATABASE $DB_POD in $DB_NS:  OPEN" 
 	else
-		echo "  ERROR: Port check from BACKEND $WEB_POD to DATABASE $DB_POD failed or timed out"
+		echo "  ERROR: BACKEND $WEB_POD to DATABASE $DB_POD: OPEN or timed out"
 		return 1
         fi
 
-	if kubectl -n $DB_NS exec -it $DB_POD -- nc -z -w $timeout $WEB_IP $WEB_PORT; then
-		echo "  Port check from DATABASE $DB_POD to BACKEND $WEB_POD in $WEB_NS successful" 
+	if kubectl -n $DB_NS exec -it $DB_POD -- nc -w $timeout $WEB_IP $WEB_PORT; then
+		echo "  DATABASE $DB_POD to BACKEND $WEB_POD in $WEB_NS:   OPEN" 
 	else
-		echo "  ERROR: Port check from DATABASE $DB_POD to BACKEND $WEB_POD failed or timed out"
+		echo "  ERROR: DATABASE $DB_POD to BACKEND $WEB_POD: CLOSED or timed out"
 		return 1
         fi
 }
@@ -202,31 +203,34 @@ function check_command_status() {
       echo "ERROR: Command '$*' failed."
    fi
 }
+function traffic_check() {
+  echo "Check connectivity..."
+}
 
 function traffic_check_from_app() {
   echo
-  echo "* Check traffic from FRONTEND $APP_POD to BACKEND $WEB_POD"
+  echo "* FRONTEND $APP_POD to BACKEND $WEB_POD:"
   check_command_status kubectl -n $APP_NS exec $APP_POD -- sh -c "nc -w 1 $WEB_IP $WEB_PORT"
   echo
-  echo "* Check traffic from FRONTEND $APP_POD to DATABASE $WEB_POD"
+  echo "* FRONTEND $APP_POD to DATABASE $WEB_POD:"
   check_command_status kubectl -n $APP_NS exec $APP_POD -- sh -c "nc -w 1 $DB_IP $DB_PORT"
 }
 
 function traffic_check_from_web() {
   echo
-  echo "* Check traffic from BACKEND $WEB_POD to FRONTEND $APP_POD"
+  echo "* BACKEND $WEB_POD to FRONTEND $APP_POD:"
   check_command_status kubectl -n $WEB_NS exec $WEB_POD -- sh -c "nc -w 1 $APP_IP $APP_PORT"
   echo
-  echo "* Check traffic from BACKEND $WEB_POD to DATABASE $DB_POD"
+  echo "* BACKEND $WEB_POD to DATABASE $DB_POD:"
   check_command_status kubectl -n $WEB_NS exec $WEB_POD -- sh -c "nc -w 1 $DB_IP $DB_PORT"
 }
 
 function traffic_check_from_db() {
   echo
-  echo "* Check traffic from DATABASE $DB_POD to FRONTEND $APP_POD"
+  echo "* DATABASE $DB_POD to FRONTEND $APP_POD:"
   check_command_status kubectl -n $DB_NS exec $DB_POD -- sh -c "nc -w 1 $APP_IP $APP_PORT"
   echo
-  echo "* Check traffic from DATABASE $DB_POD to BACKEND $WEB_POD"
+  echo "* DATABASE $DB_POD to BACKEND $WEB_POD:"
   check_command_status kubectl -n $DB_NS exec $DB_POD -- sh -c "nc -w 1 $WEB_IP $WEB_PORT"
 }
 
@@ -250,6 +254,7 @@ function run_option() {
 			;;
                 -t | --traffic)
 			extract_pod_ip
+			traffic_check
                         traffic_check_from_app
                         traffic_check_from_web
                         traffic_check_from_db

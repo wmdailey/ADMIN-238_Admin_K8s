@@ -10,19 +10,17 @@ spec:
   podSelector:
     matchLabels:
       tier: frontend
-      env: prd
   policyTypes:
     - Ingress
     - Egress
   egress:
     - to:
+      - namespaceSelector:
+          matchLabels: 
+            env: prd 
       - podSelector:
           matchLabels: 
             tier: backend
       ports:
         - protocol: TCP
           port: 80 
-    - to:
-      - namespaceSelector:
-          matchLabels: 
-            env: prd 
