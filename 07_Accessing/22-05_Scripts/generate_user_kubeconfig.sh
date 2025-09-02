@@ -15,8 +15,8 @@
 #set >> /tmp/setvar.txt
 
 
-read -p 'Enter the Username : ' name
-read -p 'Enter the Group Name : ' group
+read -p 'Enter the Username: ' name
+read -p 'Enter the Group Name: ' group
 read -p 'Enter the Namespace Name: ' namespace
 
 export CLIENT=$name

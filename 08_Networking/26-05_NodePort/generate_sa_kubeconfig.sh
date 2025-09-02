@@ -15,7 +15,7 @@
 #set -eu
 #set >> /tmp/setvar.txt
 
-read -p 'Enter the ServiceAccount Name : ' name
+read -p 'Enter the ServiceAccount Name: ' name
 read -p 'Enter the Namespace Name: ' namespace
 
 export SA_NAME=$name
