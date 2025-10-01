@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my01-prop-cm
+data:
+  CHANNEL_ADDRESS: 0.0.0.0:8686
+  INTERFACE: default
+  INTERNAL_ADDRESS: 0.0.0.0:9864
+  PROVIDER: tvmx
+  QOP: auth
+  REDUNDANCY: '"true"'
+  STAT.INTERVAL: '"36000"'

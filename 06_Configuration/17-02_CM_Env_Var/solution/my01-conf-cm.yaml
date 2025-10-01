@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my01-conf-cm
+data:
+  END_USER: dana_dev
+  GROUPS: dev,biz
+  ROLE: developer
