@@ -6,10 +6,10 @@ kind: ConfigMap
 metadata:
   name: app02-cm 
 data:
-  app02.conf: ear
-    END_USER: dana_dev
-    GROUPS: dev,ops
-    ROLE: developer
+  app02.conf: |
+    END_USER=dana_dev
+    GROUPS=dev,ops
+    ROLE=developer
   app02.properties: |
     QOP=auth
     STAT.INTERVAL="36000"
