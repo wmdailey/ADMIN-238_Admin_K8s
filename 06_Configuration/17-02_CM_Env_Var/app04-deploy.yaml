@@ -20,7 +20,6 @@ spec:
       containers:
         - name: app-app
           image: alpine:3
-              sleep 20; done;
           ports:
             - containerPort: 80
           volumeMounts:
@@ -29,7 +28,7 @@ spec:
           command:
             - /bin/sh
             - -c
-            - while true; do echo "$(date +%D) The end user is $(cat /etc/config/END_USER)";
+            - while true; do echo "$(date +%D) The end user is $(cat /etc/config/END_USER)"; sleep 20; done;
           resources: {}
       volumes:
         - name: app04-vol
