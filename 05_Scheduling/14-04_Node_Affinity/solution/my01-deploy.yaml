@@ -32,9 +32,9 @@ spec:
                 - key: arch
                   operator: In
                   values:
-                    - gpu 
+                    - x64 
               - matchExpressions:
                 - key: disktype
                   operator: In
                   values:
-                    - sdd 
+                    - hdd 

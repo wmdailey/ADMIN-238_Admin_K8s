@@ -32,7 +32,7 @@ spec:
                 - key: arch
                   operator: In
                   values:
-                    - gpu 
+                    - arm 
               - matchExpressions:
                 - key: disktype
                   operator: In

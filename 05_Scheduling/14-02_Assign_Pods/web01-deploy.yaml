@@ -32,3 +32,4 @@ spec:
         ports:
           - protocol: TCP
             containerPort: 80
+        resources: {}
