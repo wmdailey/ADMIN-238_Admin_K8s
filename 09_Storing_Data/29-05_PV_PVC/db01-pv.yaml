@@ -15,4 +15,4 @@ spec:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   hostPath:
-    path: "/tmp/data"
+    path: "/var/postgresql/data"

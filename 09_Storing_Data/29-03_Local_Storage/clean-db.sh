@@ -41,7 +41,8 @@
 kubectl -n db-ns delete deploy db01-deploy db02-deploy
 kubectl -n db-ns delete svc db01-svc db02-svc
 kubectl -n db-ns delete cm db01-cm db02-cm
-kubectl taint nodes edu-worker2 edu-worker3 env=prod:NoSchedule-
+kubectl taint node edu-worker tier=db:NoSchedule-
+kubectl taint nodes edu-worker2 edu-worker3 tier=frontend:NoSchedule-
 kubectl delete namespace db-ns
 
 echo "Finished"

@@ -22,12 +22,11 @@
 # the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
 # OR CONDITIONS OF ANY KIND, either express or implied.
 
-# Title: clean-ingress-controller.sh
+# Title: clean-db.sh
 # Author: WKD
 # Version: 3.2.0
 # Date: 17JUN25
-# Purpose: Clean out the ingress controller that was installed manually.
-# action menu option.
+# Purpose: Clean up 
 
 # DEBUG
 #set -x
@@ -37,13 +36,13 @@
 # VARIABLE
 
 # MAIN
-kubectl -n database delete sts db01-sts
-kubectl -n database delete svc db01-svc
-kubectl -n database delete cm db01-cm
-kubectl -n database delete pvc db01-pvc
+kubectl -n db-ns delete deploy db01-deploy
+kubectl -n db-ns delete svc db01-svc
+kubectl -n db-ns delete cm db01-cm
+kubectl -n db-ns delete pvc db01-pvc
 kubectl delete pv db01-pv
-kubectl taint node prd01-worker dedicated=db:NoSchedule-
-kubectl taint nodes prd01-worker2 prd01-worker3 dedicated=no-db:NoSchedule-
-kubectl delete namespace database
+kubectl taint node edu-worker tier=db:NoSchedule-
+kubectl taint nodes edu-worker2 edu-worker3 tier=frontend:NoSchedule-
+kubectl delete namespace db-ns
 
 echo "Finished"

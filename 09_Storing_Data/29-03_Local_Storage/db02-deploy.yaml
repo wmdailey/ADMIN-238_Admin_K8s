@@ -30,6 +30,11 @@ spec:
       labels:
         pod: db02-pod
     spec:
+      tolerations:
+        - key: "tier"
+          operator: "Equal"
+          value: "db"
+          effect: "NoSchedule"
       containers:
         - name: postgres
           image: postgres:17.5
@@ -42,6 +47,7 @@ spec:
           volumeMounts:
             - name: db02-vol
               mountPath: /var/lib/postgresql/data
+          resources: {}
       volumes:
         - name: db02-vol
           hostPath:
