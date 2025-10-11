@@ -22,26 +22,19 @@
 # the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
 # OR CONDITIONS OF ANY KIND, either express or implied.
 
-# Title: clean-ingress-controller.sh
+# Title: clean-network.sh
 # Author: WKD
 # Version: 3.2.0
 # Date: 17JUN25
-# Purpose: Clean out the ingress controller that was installed manually.
-# action menu option.
 
 # DEBUG
 #set -x
 #set -eu
 #set >> /tmp/setvar.txt
 
-
 # VARIABLE
 
 # MAIN
-kubectl -n db-ns delete deploy db01-deploy db02-deploy
-kubectl -n db-ns delete svc db01-svc db02-svc
-kubectl -n db-ns delete cm db01-cm db02-cm
-kubectl taint nodes edu-worker2 edu-worker3 env=prod:NoSchedule-
-kubectl delete namespace db-ns
-
+kubectl delete deploy web01-deploy store01-deploy
+kubectl delete svc web01-svc store01-svc
 echo "Finished"

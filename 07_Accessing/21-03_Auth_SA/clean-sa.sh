@@ -37,7 +37,7 @@
 # VARIABLE
 
 # MAIN
-#kubectl -n devfin-ns delete pod fin01-pod
+kubectl -n devfin-ns delete pod fin01-pod
 kubectl -n devfin-ns delete role ops-adm-role read-pods-role
 kubectl -n devfin-ns delete rolebinding ops-adm-rb 
 kubectl delete namespace devfin-ns

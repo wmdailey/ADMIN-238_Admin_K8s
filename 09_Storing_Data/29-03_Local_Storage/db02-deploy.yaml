@@ -5,7 +5,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: db02-cm 
-  namespace: database
+  namespace: db-ns
   labels:
     app: db02-db
 data:
@@ -14,14 +14,13 @@ data:
   POSTGRES_PASSWORD: BadPass@1
 ---
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
-  name: db02-sts
-  namespace: database
+  name: db02-deploy
+  namespace: db-ns
   labels:
     app: db02-db
 spec:
-  serviceName: db02-svc
   selector:
     matchLabels:
       pod: db02-pod
@@ -53,7 +52,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: db02-svc
-  namespace: database
+  namespace: db-ns
   labels:
     app: db02-db
 spec:

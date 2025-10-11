@@ -22,12 +22,10 @@
 # the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
 # OR CONDITIONS OF ANY KIND, either express or implied.
 
-# Title: clean-webstore.sh
+# Title: clean-network.sh
 # Author: WKD
 # Version: 3.2.0
 # Date: 17JUN25
-# Purpose: Clean out the ingress controller that was installed manually.
-# action menu option.
 
 # DEBUG
 #set -x
@@ -37,11 +35,6 @@
 # VARIABLE
 
 # MAIN
-kubectl -n webstore-ns delete deploy webstore-order-deploy webstore-video-deploy 
-kubectl -n webstore-ns delete svc webstore-order-svc webstore-video-svc
-kubectl -n webstore-ns delete cm webstore-order-cm  webstore-order-nginx-cm 
-kubectl -n webstore-ns delete cm webstore-video-cm  webstore-video-nginx-cm 
-kubectl -n webstore-ns delete webstore-ing
-kubectl delete namespace webstore-ns 
-
+kubectl delete deploy web01-deploy store01-deploy
+kubectl delete svc web01-svc store01-svc
 echo "Finished"
