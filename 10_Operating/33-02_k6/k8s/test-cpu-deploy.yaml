@@ -4,19 +4,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: test-cpu
+  name: test-cpu-deploy
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: test-cpu
+      pod: test-cpu-pod
   template:
     metadata:
       labels:
-        app: test-cpu
+        pod: test-cpu-pod
     spec:
       containers:
-      - name: test-cpu
+      - name: test-cpu-app
         image: wmdailey/k8s-test-cpu:latest 
         ports:
         - containerPort: 8080
@@ -29,16 +29,16 @@ spec:
           # The limits section prevents the pod from consuming more than this amount.
           # This helps in preventing a single pod from consuming all node resources.
           limits:
-            cpu: "500m" # 50% of a core
+            cpu: "2000m" # 2 vcore
             memory: "128Mi"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: test-cpu 
+  name: test-cpu-svc
 spec:
   selector:
-    app: test-cpu
+    pod: test-cpu-pod
   type: LoadBalancer
   ports:
     - protocol: TCP

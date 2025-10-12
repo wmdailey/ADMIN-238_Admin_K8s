@@ -1,0 +1,74 @@
+# Exercise 28-02 v1.2.0
+#
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db01-secret 
+type: Opaque
+stringData:
+  MYSQL_ROOT_PASSWORD: QmFkUGFzc0AxCg==
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db01-sts 
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  serviceName: db01-svc  # Must match the headless service name
+  replicas: 1 # Or more for a clustered setup
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      initContainers:
+      - name: init-mysql
+        image: mysql:8.0 # Or your desired MySQL version
+        command: ["bash", "-c", "set -ex; # Additional init commands if needed"]
+        volumeMounts:
+        - name: db01-pv
+          mountPath: /var/lib/mysql
+      containers:
+      - name: mysql
+        image: mysql:8.0
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-password
+              key: MYSQL_ROOT_PASSWORD
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: db01-pv 
+          mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+  - metadata:
+      name: db01-pv 
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: standard # Or your specific StorageClass
+      resources:
+        requests:
+          storage: 10Gi # Adjust storage size as needed
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db01-svc 
+  labels:
+    app: mysql
+    pod: db01-sts-0
+spec:
+  selector:
+    app: mysql
+  ports:
+  - port: 3306
+    name: mysql
+  clusterIP: None # This makes it a headless service

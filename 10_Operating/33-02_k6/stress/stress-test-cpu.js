@@ -10,9 +10,9 @@ export let options = {
   // This is where we control the number of virtual users (VUs) over time.
   stages: [
     { duration: '30s', target: 10 },  // Stage 1: Ramp up to a baseline load of 20 VUs in 30 seconds.
-    { duration: '1m', target: 20 }, // Stage 2: Slowly ramp up to 100 VUs in 1 minute.
-    { duration: '2m', target: 100 },  // Stage 3: Ramp up to a 1000 VUs in 2 minutes.
-    { duration: '1m', target: 100 },  // Stage 4: Hold the top end for 1 minutes.
+    { duration: '30s', target: 20 }, // Stage 2: Slowly ramp up to 20 VUs in 1 minute.
+    { duration: '1m', target: 50 },  // Stage 3: Ramp up to a 50 VUs in 2 minutes.
+    { duration: '1m', target: 50 },  // Stage 4: Hold the top end for 1 minutes.
     { duration: '30s', target: 20 },  // Stage 5: Scale down quickly for recovery analysis.
     { duration: '10s', target: 0 },   // Stage 6: Ramp down to 0 VUs.
   ],

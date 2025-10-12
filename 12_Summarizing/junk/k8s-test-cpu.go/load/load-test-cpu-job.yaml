@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: load-test-cpu 
+spec:
+  template:
+    spec:
+      containers:
+      - name: k6-runner
+        image: grafana/k6:latest
+        command: ["k6", "run", "/scripts/load-test-cpu.js"]
+        resources:
+          # Request and limit are important for a CPU-intensive test.
+          # The high limit ensures the container is not throttled.
+          requests:
+            cpu: "1"
+            memory: "256Mi"
+          limits:
+            cpu: "2"
+            memory: "512Mi"
+        volumeMounts:
+        - name: scripts-vol 
+          mountPath: /scripts/load-test-cpu.js
+          subPath: load-test-cpu.js
+      restartPolicy: Never
+      volumes:
+      - name: scripts-vol 
+        configMap:
+          name: load-test-cpu 
+  backoffLimit: 4

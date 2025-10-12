@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  # The name of your deployment
+  name: cpu-stressor
+  labels:
+    app: cpu-stressor
+spec:
+  # Define the number of replicas (instances) you want to run.
+  # For a CPU-intensive app, scaling up can help distribute the load.
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cpu-stressor
+  template:
+    metadata:
+      labels:
+        app: cpu-stressor
+    spec:
+      containers:
+        - name: cpu-stressor
+          image: wmdailey/k8s-cpu-stressor:latest
+          args:
+            - "-cpu=0.2"
+            - "-forever"
+          ports:
+            - containerPort: 8080
+          resources:
+            # Request 100m core of CPU for each replica. This is the guaranteed amount.
+            requests:
+              cpu: "100m"
+              memory: "50Mi"
+            # Limit the CPU to 200m cores. This prevents a single pod from consuming
+            # too much cores, which can starve other processes.
+            limits:
+              cpu: "200m"
+              memory: "200Mi"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cpu-stressor
+  labels:
+    app: cpu-stressor 
+spec:
+  type: LoadBalancer 
+  selector:
+    pod: cpu-stressor 
+  ports:
+    - name: http
+      port: 80 
+      targetPort: 8080 
+      protocol: TCP
