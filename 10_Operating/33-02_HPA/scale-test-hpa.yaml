@@ -18,13 +18,13 @@ spec:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 60 # Target 70% CPU utilization
+          averageUtilization: 60 # Target 60% CPU utilization
     - type: Resource
       resource:
         name: memory
         target:
           type: Utilization
-          averageUtilization: 70 # Target 80% Memory utilization
+          averageUtilization: 70 # Target 70% Memory utilization
 
   behavior:
     scaleDown:
