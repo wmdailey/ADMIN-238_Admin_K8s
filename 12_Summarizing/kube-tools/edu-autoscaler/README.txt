@@ -41,6 +41,7 @@ kubectl port-forward service/autoscaler-svc 8080:8080
 ### How to Use for HPA Testing
 
 # 1.  **Deploy the application:** Apply the `hpa-test-deployment.yaml` and the hpa-test-hpa.yaml
+The curl command can be run from a Pod. The http URL can be run from a browser.
 
 # 2.  **Check Status and Release:**
     # Check current memory usage

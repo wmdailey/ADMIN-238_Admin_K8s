@@ -1,0 +1,23 @@
+# Exercise 32-02 v3.2.0
+#
+
+# Readiness Probe
+
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 5000
+          initialDelaySeconds: 3
+          periodSeconds: 2
+          failureThreshold: 2
+
+# Liveness Probe
+
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 5000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          failureThreshold: 3
+

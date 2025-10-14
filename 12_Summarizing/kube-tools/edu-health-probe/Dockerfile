@@ -11,11 +11,15 @@ ENV GOOS=linux
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy the Go application source code (assuming it's named health_server.go)
-COPY health_server.go . 
+# Copy the Go application source code (assuming it's named health_probe.go)
+COPY app/main.go . 
 
-# Build the application, statically linked, outputting a binary named 'probe-server'
-RUN go build -ldflags "-w -s" -o probe-server health_server.go
+# Build the Go binary
+# CGO_ENABLED=0 is important for creating a statically linked binary, which is ideal for a scratch image
+RUN go mod init edu-health-probe || true
+RUN go mod tidy
+RUN CGO_ENABLED=0 go build -o /edu-health-probe
+RUN go build -ldflags "-w -s" -o edu-health-probe main.go
 
 # --- Stage 2: Create the minimal production image ---
 # Use a minimal base image (Scratch or Alpine) for the smallest footprint
@@ -27,7 +31,7 @@ EXPOSE 8080
 # Set the entrypoint to the static binary from the builder stage
 WORKDIR /root/
 # Copy the compiled binary from the builder stage
-COPY --from=builder /app/probe-server .
+COPY --from=builder /app/edu-health-probe .
 
 # Run the application
-ENTRYPOINT ["./probe-server"]
+ENTRYPOINT ["./edu-health-probe"]

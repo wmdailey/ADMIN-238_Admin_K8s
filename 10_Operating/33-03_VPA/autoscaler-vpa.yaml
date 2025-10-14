@@ -8,7 +8,7 @@ spec:
     kind:       Deployment
     name:       autoscaler-deploy
   updatePolicy:
-    updateMode: "Auto"
+    updateMode: "Recreate"
   resourcePolicy:
     containerPolicies:
     - containerName: '*'  # Applies this policy to all containers

@@ -6,7 +6,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#      http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,65 +22,113 @@
 # the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
 # OR CONDITIONS OF ANY KIND, either express or implied.
 
-# Title: scale-test-report.sh
-# Author: WKD
-# Description: Queries Kubernetes to report the status of all Vertical Pod Autoscalers (VPAs)
+# Title: autoscaler_reporter.sh
+# Author: WKD 
+# Description: Queries Kubernetes to report the status of a specified autoscaler (HPA or VPA)
 # and the resource usage of pods (via kubectl top pods) in a specified namespace.
-# Usage: ./k8s_status_reporter.sh <NAMESPACE> [COUNT]
-# If COUNT is provided, the script runs that many times. If not, it runs once.
+# Usage: ./k8s_autoscaler_reporter.sh --namespace <NAMESPACE> --type <hpa|vpa>
+# This script runs indefinitely, reporting at a specified interval.
 
 # --- Configuration ---
-NAMESPACE=$1
-LOOP_COUNT=$2
-ITERATION=1
 SLEEP_TIME=5 # Sleep time in seconds between reports
+
+# --- Variables for options namespace ---
+NAMESPACE=""
+AUTOSCALER_TYPE=""
 
 # --- Functions ---
 
-# Function to check if the required namespace argument was provided
-check_arguments() {
-    if [ -z "$NAMESPACE" ]; then
-        echo "Error: Please provide a namespace name." >&2
-        echo "Usage: $0 <NAMESPACE> [COUNT]" >&2
-        exit 1
+# Function to display the help menu
+display_help() {
+    echo "Usage: $0 --namespace <NAMESPACE> --type <hpa|vpa>"
+    echo ""
+    echo "Options:"
+    echo "  --namespace <name>   The namespace to monitor."
+    echo "  --type <hpa|vpa>     The type of autoscaler to report on."
+    echo "  --help               Display this help message."
+    echo ""
+    echo "Examples:"
+    echo "  $0 --namespace my-app --type hpa"
+    echo "  $0 --namespace default --type vpa"
+    exit 0
+}
+
+# Function to parse command-line arguments and validate input
+parse_arguments() {
+    # If no arguments are provided, show help
+    if [ "$#" -eq 0 ]; then
+        display_help
     fi
 
-    # Optional: Basic check if kubectl is installed
+    while [[ "$#" -gt 0 ]]; do
+        case "$1" in
+            --namespace)
+                if [ -n "$2" ]; then
+                    NAMESPACE="$2"
+                    shift 2
+                else
+                    echo "Error: --namespace requires a value." >&2
+                    exit 1
+                fi
+                ;;
+            --type)
+                if [ "$2" == "hpa" ] || [ "$2" == "vpa" ]; then
+                    AUTOSCALER_TYPE="$2"
+                    shift 2
+                else
+                    echo "Error: --type must be 'hpa' or 'vpa'." >&2
+                    exit 1
+                fi
+                ;;
+            --help)
+                display_help
+                ;;
+            *)
+                echo "Error: Unknown option: $1" >&2
+                display_help
+                ;;
+        esac
+    done
+
+    # Final validation of required arguments
+    if [ -z "$NAMESPACE" ] || [ -z "$AUTOSCALER_TYPE" ]; then
+        echo "Error: Both --namespace and --type are required." >&2
+        display_help
+    fi
+}
+
+# Function to check if the required kubectl command is installed
+check_kubectl() {
     if ! command -v kubectl &> /dev/null; then
         echo "Error: 'kubectl' command not found. Please ensure Kubernetes tools are installed and in your PATH." >&2
         exit 1
     fi
-    
-    # Check if LOOP_COUNT is a positive integer if provided
-    if [ -n "$LOOP_COUNT" ] && ! [[ "$LOOP_COUNT" =~ ^[0-9]+$ ]] || [ "$LOOP_COUNT" -eq 0 ]; then
-        echo "Error: COUNT must be a positive integer." >&2
-        echo "Usage: $0 <NAMESPACE> [COUNT]" >&2
-        exit 1
-    fi
 }
 
-# Function to report the VPA status (Now first in the output)
-report_vpa_status() {
-#    echo "HORIZONTAL POD AUTOSCALER (VPA) STATUS in namespace: '$NAMESPACE'"
-#    echo "----------------------------------------------------------------"
-
-    # Run kubectl get vpa and filter out errors if namespace is invalid/empty
-    VPA_OUTPUT=$(kubectl get vpa -n "$NAMESPACE" 2>/dev/null)
-
-    if [ -z "$VPA_OUTPUT" ]; then
-        echo "No Vertical Pod Autoscalers (VPA) found in this namespace."
-    else
-        echo "$VPA_OUTPUT"
+# Function to report the autoscaler status based on type
+report_autoscaler_status() {
+    if [ "$AUTOSCALER_TYPE" == "hpa" ]; then
+        echo "--- HPA STATUS REPORT ---"
+        AUTOSCALER_OUTPUT=$(kubectl get hpa -n "$NAMESPACE" 2>/dev/null)
+        if [ -z "$AUTOSCALER_OUTPUT" ]; then
+            echo "No Horizontal Pod Autoscalers (HPA) found in namespace '$NAMESPACE'."
+        else
+            echo "$AUTOSCALER_OUTPUT"
+        fi
+    elif [ "$AUTOSCALER_TYPE" == "vpa" ]; then
+        echo "--- VPA STATUS REPORT ---"
+        AUTOSCALER_OUTPUT=$(kubectl get vpa -n "$NAMESPACE" 2>/dev/null)
+        if [ -z "$AUTOSCALER_OUTPUT" ]; then
+            echo "No Vertical Pod Autoscalers (VPA) found in namespace '$NAMESPACE'."
+        else
+            echo "$AUTOSCALER_OUTPUT"
+        fi
     fi
 }
 
 # Function to report the pod resource usage (CPU/Memory)
 report_pod_metrics() {
-#    echo "POD RESOURCE USAGE (kubectl top pods) in namespace: '$NAMESPACE'"
-#    echo "----------------------------------------------------------------"
-
-    # Run kubectl top pods to get current CPU and Memory usage
-    # This requires Kubernetes Metrics Server to be running.
+    echo "--- POD RESOURCE METRICS ---"
     POD_METRICS=$(kubectl top pods -n "$NAMESPACE" 2>/dev/null)
 
     if [ "$?" -ne 0 ]; then
@@ -98,35 +146,19 @@ report_pod_metrics() {
     fi
 }
 
-
 # --- Main Execution ---
-check_arguments
+parse_arguments "$@"
+check_kubectl
 
 while true; do
+    report_autoscaler_status
     echo ""
-    echo "--- REPORT ITERATION #$ITERATION / $LOOP_COUNT ---"
-    
-    # VPA status is now reported first
-    report_vpa_status
-    echo "" 
-    # Pod metrics reported second
     report_pod_metrics
 
-    ITERATION=$((ITERATION + 1))
-    
-    # Break the loop if LOOP_COUNT was specified and reached
-    if [ -n "$LOOP_COUNT" ] && [ "$ITERATION" -gt "$LOOP_COUNT" ]; then
-        break
-    fi
-    
-    # Sleep before the next iteration, unless it's the last one
-    if [ -z "$LOOP_COUNT" ] || [ "$ITERATION" -le "$LOOP_COUNT" ]; then
-        echo ""
-        echo "Sleeping for $SLEEP_TIME seconds before next iteration..."
-        sleep "$SLEEP_TIME"
-    fi
+    echo ""
+    echo "Sleeping for $SLEEP_TIME seconds before next iteration..."
+    echo "-----------------------------"
+    echo ""
 
+    sleep "$SLEEP_TIME"
 done
-
-echo ""
-echo "Script execution complete."

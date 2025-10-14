@@ -1,0 +1,54 @@
+# Exercise 32-02 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app01-deploy
+  namespace: dev-ns
+  labels:
+    app: store-app
+    tier: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      pod: app01-pod
+  template:
+    metadata:
+      labels:
+        pod: app01-pod
+        env: development
+        version: "2.0"
+    spec:
+      initContainers:
+        - name: init-service-check
+          image: busybox:1.36
+          imagePullPolicy: Always
+          command: ["sh", "-c"]
+          args: ["echo 'Performing lengthy setup...'; sleep 10"]
+      containers:
+      - name: edu-backend
+        image: wmdailey/k8s-web-traffic-counter:latest
+        ports:
+          - containerPort: 5000
+            protocol: TCP
+        resources: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app01-svc
+  namespace: dev-ns
+  labels:
+    app: store-app
+spec:
+  type: ClusterIP
+  selector:
+    pod: app01-pod
+  ports:
+    - name: http
+      port: 5000 
+      targetPort: 5000 
+      protocol: TCP
