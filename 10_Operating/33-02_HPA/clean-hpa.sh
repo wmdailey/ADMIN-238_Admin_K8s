@@ -35,8 +35,8 @@
 # VARIABLE
 
 # MAIN
-kubectl delete deploy scale-test-deploy
-kubectl delete svc scale-test-svc
-kubectl delete hpa scale-test-hpa 
+kubectl delete deploy autoscaler-deploy
+kubectl delete svc autoscaler-svc
+kubectl delete hpa autoscaler-hpa 
 
 echo "Finished"
