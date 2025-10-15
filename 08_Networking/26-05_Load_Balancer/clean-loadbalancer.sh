@@ -22,7 +22,7 @@
 # the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
 # OR CONDITIONS OF ANY KIND, either express or implied.
 
-# Title: clean-ingress-controller.sh
+# Title: clean-loadbalancer.sh
 # Author: WKD
 # Version: 3.2.0
 # Date: 17JUN25
@@ -37,11 +37,8 @@
 # VARIABLE
 
 # MAIN
-kubectl delete -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
-kubectl -n kubernetes-dashboard delete deployment kubernetes-dashboard
-kubectl -n kubernetes-dashboard delete service kubernetes-dashboard 
-kubectl -n kubernetes-dashboard delete serviceaccount kubernetes-dashboard 
-kubectl delete ns kubernetes-dashboard 
-
+kubectl delete -f https://raw.githubusercontent.com/metallb/metallb/v0.13.7/config/manifests/metallb-native.yaml
+kubectl delete ipaddresspool load-balancer-pool
+kubectl delete l2advertisement load-balancer-pool
 
 echo "Finished"

@@ -58,7 +58,7 @@ metadata:
   labels:
     app: app-webstore
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: webstore-order-pod
