@@ -11,7 +11,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: webstore.com
+  - host: webstore.local
     http:
       paths:
       - path: /order
