@@ -22,12 +22,11 @@
 # the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
 # OR CONDITIONS OF ANY KIND, either express or implied.
 
-# Title: clean-ingress-controller.sh
+# Title: clean-probe.sh
 # Author: WKD
 # Version: 3.2.0
 # Date: 17JUN25
-# Purpose: Clean out the ingress controller that was installed manually.
-# action menu option.
+# Purpose: Clean out the health probes
 
 # DEBUG
 #set -x
@@ -37,9 +36,7 @@
 # VARIABLE
 
 # MAIN
-kubectl delete deploy no-probe-deploy
-kubectl delete deploy ready-probe-deploy
-kubectl delete svc no-probe-svc
-kubectl delete svc ready-probe-svc
+kubectl delete deploy health-probe-deploy
+kubectl delete svc health-probe-svc
 
 echo "Finished"

@@ -1,3 +1,6 @@
+# Exercise 32-02 v3.2.0
+#
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -41,10 +44,15 @@ spec:
           httpGet:
             path: /readyz
             port: 8080
-          initialDelaySeconds: 5 # Wait 5 seconds before first check
-          periodSeconds: 3        # Check every 3 seconds
-          timeoutSeconds: 3
-          failureThreshold: 3     # Allow 3 consecutive failures before marking unready
+          initialDelaySeconds: 5 # Wait 5 seconds before the first check
+          periodSeconds: 5       # The frequency (in seconds) that the 
+                                 # kubelet will perform the probe. 
+          timeoutSeconds: 3      # The number of seconds after which the 
+                                 # probe is considered to have failed,
+                                 # if the application hasn't responded.
+          failureThreshold: 3    # The minimum number of consecutive 
+                                 # failures required to be considered 
+                                 # failed, leading to the restart.
 
 ---
 apiVersion: v1

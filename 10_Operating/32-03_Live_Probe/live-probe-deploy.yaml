@@ -1,3 +1,6 @@
+# Exercise 32-03 v3.2.0
+#
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -5,7 +8,7 @@ metadata:
   labels:
     app: live-probe
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       pod: live-probe-pod
@@ -42,7 +45,7 @@ spec:
           timeoutSeconds: 3      # The number of seconds after which the 
                                  # probe is considered to have failed,
                                  # if the application hasn't responded.
-          failureThreshold: 1    # The minimum number of consecutive 
+          failureThreshold: 3    # The minimum number of consecutive 
                                  # failures required to be considered 
                                  # failed, leading to the restart.
 
