@@ -37,7 +37,9 @@
 # VARIABLE
 
 # MAIN
-kubectl delete deploy health-probe-deploy
-kubectl delete svc health-probe-svc
+kubectl delete deploy no-probe-deploy
+kubectl delete deploy ready-probe-deploy
+kubectl delete svc no-probe-svc
+kubectl delete svc ready-probe-svc
 
 echo "Finished"

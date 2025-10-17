@@ -34,12 +34,17 @@ spec:
         # A failure here triggers a container restart.
         livenessProbe:
           httpGet:
-            path: /healthz
+            path: /livez
             port: 8080
-          initialDelaySeconds: 5 # Wait 5 seconds before first check
-          periodSeconds: 5       # Check every 5 seconds
-          timeoutSeconds: 3
-          failureThreshold: 3    # Fail immediately on the first 500 error
+          initialDelaySeconds: 5 # Wait 5 seconds before the first check
+          periodSeconds: 5       # The frequency (in seconds) that the 
+                                 # kubelet will perform the probe. 
+          timeoutSeconds: 3      # The number of seconds after which the 
+                                 # probe is considered to have failed,
+                                 # if the application hasn't responded.
+          failureThreshold: 2    # The minimum number of consecutive 
+                                 # failures required to be considered 
+                                 # failed, leading to the restart.
 
 ---
 apiVersion: v1

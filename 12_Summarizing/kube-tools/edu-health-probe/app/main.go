@@ -9,44 +9,54 @@ import (
 )
 
 // --- Global State ---
-
-// isLive represents the Liveness state. If false, the pod is considered unhealthy and should be restarted.
-// We use atomic values for safe concurrency, though a simple bool would suffice for this example.
 var isLive atomic.Bool
-
-// isReady represents the Readiness state. If false, the pod is unhealthy and should be taken out of service.
 var isReady atomic.Bool
 
 // --- Handlers ---
 
 // livenessHandler responds to the Liveness probe (/livez).
-// If isLive is false, it returns HTTP 500 (Internal Server Error), simulating a fatal error.
 func livenessHandler(w http.ResponseWriter, r *http.Request) {
 	if isLive.Load() {
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, "Liveness: OK (Alive)\n")
+		fmt.Fprint(w, "Liveness: OK (Application is alive)\n")
 	} else {
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, "Liveness: FAILED (Simulating Crash)\n")
-		// In a real application, a failed liveness check would often lead to the process exiting.
-		// For this simulation, we just return 500.
+		// Change the Liveness failure output message back to the original
+		fmt.Fprint(w, "Liveness: FAILED (Simulating Crash)\n") 
+		// This 500 status is what tells Kubernetes the pod is unhealthy and needs a restart.
 	}
 }
 
 // readinessHandler responds to the Readiness probe (/readyz).
-// If isReady is false, it returns HTTP 503 (Service Unavailable), simulating a temporary issue.
 func readinessHandler(w http.ResponseWriter, r *http.Request) {
 	if isReady.Load() {
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprint(w, "Readiness: OK (Ready to serve traffic)\n")
 	} else {
+		// Ensures /readyz reports NOT READY when isReady is false
 		w.WriteHeader(http.StatusServiceUnavailable)
 		fmt.Fprint(w, "Readiness: NOT READY (Temporary Issue)\n")
 	}
 }
 
+// stateHandler reports the current state of Liveness and Readiness for the application.
+func stateHandler(w http.ResponseWriter, r *http.Request) {
+	liveStatus := "ALIVE"
+	if !isLive.Load() {
+		// Updated state for the root path: use FAILED to match the livez handler's intent
+		liveStatus = "FAILED" 
+	}
+
+	readyStatus := "READY"
+	if !isReady.Load() {
+		readyStatus = "NOT READY"
+	}
+
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "--- Application State ---\nLiveness: %s\nReadiness: %s\n", liveStatus, readyStatus)
+}
+
 // toggleHandler handles requests to flip the state of either liveness or readiness.
-// Usage: /toggle/liveness or /toggle/readiness
 func toggleHandler(w http.ResponseWriter, r *http.Request) {
 	stateType := r.URL.Path[len("/toggle/"):]
 
@@ -67,10 +77,15 @@ func toggleHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Atomically swap the state
 	newState := !state.Swap(!state.Load())
-	
+
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "%s state successfully toggled to: %t\n", stateName, newState)
 	log.Printf("%s state toggled to %t by user request.", stateName, newState)
+}
+
+// infoHandler reports the usage statement.
+func infoHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, "Welcome to the Probe Tester.\nEndpoints:\n- / (Current Application State)\n- /livez (Liveness Probe)\n- /readyz (Readiness Probe)\n- /toggle/<state> (Toggle on/off for Liveness/Readiness. e.g., /toggle/liveness)\n")
 }
 
 func main() {
@@ -82,15 +97,12 @@ func main() {
 	http.HandleFunc("/livez", livenessHandler)
 	http.HandleFunc("/readyz", readinessHandler)
 	http.HandleFunc("/toggle/", toggleHandler)
-	
-	// Default informational endpoint
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "Welcome to the Probe Tester. Check /livez, /readyz, or use /toggle/<state>.\n")
-	})
+	http.HandleFunc("/", stateHandler)
+	http.HandleFunc("/info", infoHandler)
 
 	port := ":8080"
 	log.Printf("Starting Probe Test Server on port %s", port)
-	
+
 	// Use a non-blocking goroutine to log current state periodically
 	go func() {
 		for {
@@ -104,4 +116,3 @@ func main() {
 		log.Fatalf("Server failed: %v", err)
 	}
 }
-

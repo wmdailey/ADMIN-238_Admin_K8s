@@ -3,9 +3,9 @@ kind: Deployment
 metadata:
   name: no-probe-deploy
   labels:
-    app: no-probe
+    app: no-probe-test
 spec:
-  replicas: 1
+  replicas: 4
   selector:
     matchLabels:
       pod: no-probe-pod
@@ -14,6 +14,10 @@ spec:
       labels:
         pod: no-probe-pod
     spec:
+      initContainers:
+      - name: busybox-init
+        image: busybox
+        command: ['sh', '-c', 'echo "Init container running..."; sleep 10; echo "Init container finished."']
       containers:
       - name: no-probe-app
         image: wmdailey/edu-health-probe:latest 
@@ -40,7 +44,7 @@ spec:
   selector:
     pod: no-probe-pod
   ports:
-  - port: 8080
+  - port: 80
     targetPort: 8080
     protocol: TCP
     name: http

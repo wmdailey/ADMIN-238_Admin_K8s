@@ -3,9 +3,9 @@ kind: Deployment
 metadata:
   name: ready-probe-deploy
   labels:
-    app: ready-probe
+    app: ready-probe-test
 spec:
-  replicas: 3
+  replicas: 4
   selector:
     matchLabels:
       pod: ready-probe-pod
@@ -14,9 +14,7 @@ spec:
       labels:
         pod: ready-probe-pod
     spec:
-      # --- Init Container Configuration ---
-      # This container runs to completion before the main application container starts.
-      # It's a useful pattern for tasks like waiting for a database or pre-populating data.
+      # This init container runs to completion before the main application container starts.
       initContainers:
       - name: busybox-init
         image: busybox
@@ -36,18 +34,6 @@ spec:
             cpu: "500m"
             memory: "256Mi"
 
-        # --- Liveness Probe Configuration (/healthz) ---
-        # Checks if the application process is running and responsive. 
-        # A failure here triggers a container restart.
-        livenessProbe:
-          httpGet:
-            path: /healthz
-            port: 8080
-          initialDelaySeconds: 5 # Wait 5 seconds before first check
-          periodSeconds: 5       # Check every 5 seconds
-          timeoutSeconds: 3
-          failureThreshold: 3    # Fail immediately on the first 500 error
-
         # --- Readiness Probe Configuration (/readyz) ---
         # Checks if the application is ready to accept traffic.
         # A failure here removes the pod from the Service endpoints.
@@ -55,9 +41,9 @@ spec:
           httpGet:
             path: /readyz
             port: 8080
-          initialDelaySeconds: 10 # Wait 10 seconds before first check
-          periodSeconds: 10       # Check every 10 seconds
-          timeoutSeconds: 5
+          initialDelaySeconds: 5 # Wait 5 seconds before first check
+          periodSeconds: 3        # Check every 3 seconds
+          timeoutSeconds: 3
           failureThreshold: 3     # Allow 3 consecutive failures before marking unready
 
 ---
@@ -71,7 +57,7 @@ spec:
   selector:
     pod: ready-probe-pod
   ports:
-  - port: 8080
+  - port: 80
     targetPort: 8080
     protocol: TCP
     name: http
