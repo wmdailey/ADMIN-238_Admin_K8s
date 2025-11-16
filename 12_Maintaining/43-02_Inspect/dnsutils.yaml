@@ -1,0 +1,36 @@
+# Exercise 27-03 v3.2.0 - PERPETUAL DIAGNOSTIC POD (Ubuntu Minimal)
+#
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kube-tools
+  labels:
+    env: devl
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dnsutils
+  namespace: kube-tools
+spec:
+  # Pod will never restart if the main command stays active
+  restartPolicy: Never 
+  
+  containers:
+  - name: dnsutils
+    # --- CORRECT IMAGE: Pulls the Canonical Ubuntu Minimal image ---
+    image: wmdailey/edu-dnsutils:latest 
+    imagePullPolicy: IfNotPresent
+    
+    # --- The command ensures the container runs indefinitely ---
+    command: ["/bin/sh", "-c"]
+    args:
+      # This loop runs forever, preventing the container from exiting.
+      - "while true; do sleep 1000; done" 
+      
+    # Required for interactive shell access via kubectl exec
+    stdin: true
+    tty: true
+    
+    resources: {}

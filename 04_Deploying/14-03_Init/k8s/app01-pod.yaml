@@ -1,0 +1,15 @@
+# Exercise 14-03 v3.2.0
+#
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app01-pod
+spec:
+  containers:
+    - name: busy-app 
+      image: busybox:1.28
+      command:
+        - sh
+        - -c
+        - echo The app is running! & sleep 3600

@@ -1,0 +1,29 @@
+# Exercise 18-02 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app03-deploy 
+  labels:
+    app: store-app 
+spec:
+  replicas: 2  
+  selector:
+    matchLabels:
+      pod: app03-pod 
+  template:
+    metadata:
+      labels:
+        pod: app03-pod 
+        app: prdsam
+    spec:
+      containers:
+      - name: busy-app 
+        image: busybox:1.28
+        env:
+          - name: MESSAGE
+            value: "Hello from Cloudera Edu"
+        command: ["/bin/echo"] 
+        args: ["$(MESSAGE)"]
+        resources: {}

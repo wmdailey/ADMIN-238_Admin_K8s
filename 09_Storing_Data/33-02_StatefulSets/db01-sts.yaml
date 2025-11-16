@@ -1,0 +1,58 @@
+# Exercise 33-02 v3.2.0
+#
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db01-headless-svc
+  namespace: dev-ns
+  labels:
+    app: mysql
+spec:
+  ports:
+  - port: 3306
+    name: mysql
+  clusterIP: None # Headless service for stable network identities
+  selector:
+    app: mysql
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db01-sts 
+  namespace: dev-ns
+spec:
+  serviceName: "db01-headless-svc"
+  replicas: 1 # Start with 1 replica for a single instance, scale up for replication
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:8.0
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db01-secret # Assumes a secret named 'mysql-secret' exists with 'MYSQL_ROOT_PASSWORD'
+              key: MYSQL_ROOT_PASSWORD
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ] # Volume can be mounted as read-write by a single node
+      storageClassName: "dev-sc"
+      resources:
+        requests:
+          storage: 2Gi # Request 2GB of storage for each Pod

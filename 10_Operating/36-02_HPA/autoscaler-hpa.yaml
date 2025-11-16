@@ -1,0 +1,35 @@
+# Exercise 36-02 v3.2.0
+#
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: autoscaler-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: autoscaler-deploy
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 50 # Target 50% CPU utilization
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 70 # Target 70% Memory utilization
+
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 30 # Sets the cooldown period to 30 seconds (1/2 minute)
+      policies:
+      - type: Pods
+        value: 2
+        periodSeconds: 30

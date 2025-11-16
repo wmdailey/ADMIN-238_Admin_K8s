@@ -1,0 +1,45 @@
+# Exercise 30-03 v3.2.0
+#
+# --- STABLE/PRODUCTION VERSION (90% Traffic) ---
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webstore-stable-deploy
+  labels:
+    app: webstore-app
+    version: stable
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      pod: webstore-stable-pod
+  template:
+    metadata:
+      labels:
+        pod: webstore-stable-pod
+    spec:
+      containers:
+      - name: webstore
+        image: kennethreitz/httpbin
+        ports:
+        - containerPort: 80
+        env:
+        - name: APP_VERSION
+          value: "stable" # Set environment variable for verification
+        resources: {}
+---
+# Service for the stable version
+apiVersion: v1
+kind: Service
+metadata:
+  name: webstore-stable-svc
+spec:
+  selector:
+    pod: webstore-stable-pod
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 80
+---

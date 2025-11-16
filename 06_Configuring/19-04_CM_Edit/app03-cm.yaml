@@ -1,0 +1,10 @@
+# Exercise 19-04 v3.2.0
+#
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app03-cm 
+data:
+  COLOR: green
+  PORT: "8080"

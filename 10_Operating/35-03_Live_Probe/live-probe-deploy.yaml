@@ -1,0 +1,67 @@
+# Exercise 35-03 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: live-probe-deploy
+  labels:
+    app: live-probe
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      pod: live-probe-pod
+  template:
+    metadata:
+      labels:
+        pod: live-probe-pod
+    spec:
+      containers:
+      - name: live-probe-app
+        image: wmdailey/edu-health-probe:latest 
+        ports:
+        - containerPort: 8080
+        
+        # Define resource requests/limits (Good practice for Kubernetes scheduling)
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
+
+        # --- Liveness Probe Configuration (/healthz) ---
+        # Checks if the application process is running and responsive. 
+        # A failure here triggers a container restart.
+        livenessProbe:
+          httpGet:
+            path: /livez
+            port: 8080
+          initialDelaySeconds: 5 # Wait 5 seconds before the first check
+          periodSeconds: 5       # The frequency (in seconds) that the 
+                                 # kubelet will perform the probe. 
+          timeoutSeconds: 3      # The number of seconds after which the 
+                                 # probe is considered to have failed,
+                                 # if the application hasn't responded.
+          failureThreshold: 3    # The minimum number of consecutive 
+                                 # failures required to be considered 
+                                 # failed, leading to the restart.
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: live-probe-svc
+spec:
+  # Use NodePort or LoadBalancer if testing externally. ClusterIP is sufficient for internal testing.
+  type: LoadBalancer
+  selector:
+    pod: live-probe-pod
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+    name: http
+

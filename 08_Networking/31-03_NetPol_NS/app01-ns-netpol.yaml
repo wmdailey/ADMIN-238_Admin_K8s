@@ -1,0 +1,26 @@
+# Exercise 31-03 v3.2.0
+#
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: app01-netpol
+  namespace: prd-ns
+spec:
+  podSelector:
+    matchLabels:
+      tier: frontend
+  policyTypes:
+    - Ingress
+    - Egress
+  egress:
+    - to:
+      - namespaceSelector:
+          matchLabels: 
+            env: prd 
+      - podSelector:
+          matchLabels: 
+            tier: backend
+      ports:
+        - protocol: TCP
+          port: 80 

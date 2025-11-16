@@ -1,0 +1,27 @@
+# Exercise 11-04 v3.2.0
+#
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app01-pod
+  namespace: default
+spec:
+  containers:
+  - args:
+    - --vm
+    - "1"
+    - --vm-bytes
+    - 250M
+    - --vm-hang
+    - "1"
+    command:
+    - stress
+    image: polinux/stress
+    imagePullPolicy: Always
+    name: mem-stress
+    resources:
+      limits:
+        memory: 300Mi
+      requests:
+        memory: 300Mi

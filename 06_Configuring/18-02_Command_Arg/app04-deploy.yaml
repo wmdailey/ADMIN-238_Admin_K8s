@@ -1,0 +1,30 @@
+# Exercise 18-02 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app04-deploy 
+  labels:
+    app: store-app 
+spec:
+  replicas: 2  
+  selector:
+    matchLabels:
+      pod: app04-pod 
+  template:
+    metadata:
+      labels:
+        pod: app04-pod 
+        app: prdsam
+    spec:
+      containers:
+      - name: busy-app 
+        image: busybox:1.28
+        env:
+          - name: DEMO_VAR
+            value: "Environment variable demo"
+          - name: DEBUG_MODE
+            value: "true"
+        command: ["env"] 
+        resources: {}

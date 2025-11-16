@@ -1,0 +1,70 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: webstore-ing
+  namespace: webstore-ns
+  # Annotation to rewrite the target. /$1 refers to the first capture group (.*)
+  # This is CRITICAL for the webstore.local path rules to work correctly.
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+        
+  rules:
+  # 1. webstore.local pointing to webstore-app-svc
+  - host: webstore.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: webstore-app-svc
+            port:
+              number: 80
+
+  # 2. Specific Rules (Handles traffic for order.webstore.local)
+  - host: order.webstore.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: webstore-order-svc
+            port:
+              number: 80
+              
+  # 3. Specific Rules (Handles traffic for video.webstore.local)
+  - host: video.webstore.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: webstore-video-svc
+            port:
+              number: 80
+
+  # 4. Path-Based Routing: webstore.local 
+  - host: webstore.local
+    http:
+      paths:
+      # Route: webstore.local/order -> webstore-order-svc
+      - path: /order
+        pathType: Prefix
+        backend:
+          service:
+            name: webstore-order-svc
+            port:
+              number: 80
+      # Route: webstore.local/video -> webstore-video-svc
+      - path: /video
+        pathType: Prefix
+        backend:
+          service:
+            name: webstore-video-svc
+            port:
+              number: 80

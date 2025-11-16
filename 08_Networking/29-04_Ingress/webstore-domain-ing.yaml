@@ -1,0 +1,46 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: webstore-ing
+  namespace: webstore-ns
+spec:
+  ingressClassName: nginx
+        
+  rules:
+  # 1. webstore.local pointing to webstore-app-svc
+  - host: webstore.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: webstore-app-svc
+            port:
+              number: 80
+
+  # 2. Specific Rules (Handles traffic for order.webstore.local)
+  - host: order.webstore.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: webstore-order-svc
+            port:
+              number: 80
+              
+  # 3. Specific Rules (Handles traffic for video.webstore.local)
+  - host: video.webstore.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: webstore-video-svc
+            port:
+              number: 80
+              

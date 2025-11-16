@@ -1,0 +1,35 @@
+# Exercise 15-05 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app01-deploy 
+  labels:
+    app: store-app 
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      pod: app01-pod 
+  template:
+    metadata:
+      labels:
+        pod: app01-pod 
+        app: prdsam
+    spec:
+      containers:
+      - name: busy-app 
+        image: busybox:1.28
+        command: ["sh", "-c", "echo Hello Kubernetes! && sleep 3600"] 
+        resources: {}
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - prdsam 
+            topologyKey: "kubernetes.io/hostname"

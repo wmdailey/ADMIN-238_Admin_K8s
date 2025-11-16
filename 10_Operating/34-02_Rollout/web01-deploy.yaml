@@ -1,0 +1,28 @@
+# Exercise: 34-02 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kubernetes.io/change-cause: Revision "1"/deployment.kubernetes.io
+  name: web01-deploy 
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      name: web01-pod
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        name: web01-pod 
+    spec:
+      containers:
+      - image: nginx:1.14.2 
+        name: web-app 
+        ports:
+        - protocol: TCP
+          containerPort: 8080
+        resources: {}

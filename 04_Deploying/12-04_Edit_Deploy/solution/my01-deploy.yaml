@@ -1,0 +1,24 @@
+# Exerciser 12-04 v3.2.0 
+#
+---
+apiVersion: apps/v1
+kind: Deployment # Must be in title case
+metadata:
+  name: my01-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my01-pod
+  template:
+    metadata:
+      labels:
+        app: my01-pod # Typo in app label
+        type: backend
+    spec:
+      containers:
+        - name: my-app
+          image: nginx
+          ports:
+            - name: http
+              containerPort: 80

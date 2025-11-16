@@ -1,0 +1,7 @@
+# Exercise 13-02 v3.2.0
+#
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: my02-ns

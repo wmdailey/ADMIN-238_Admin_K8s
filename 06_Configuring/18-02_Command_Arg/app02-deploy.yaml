@@ -1,0 +1,27 @@
+# Exercise 18-02 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app02-deploy 
+  labels:
+    app: store-app 
+spec:
+  replicas: 2  
+  selector:
+    matchLabels:
+      pod: app02-pod 
+  template:
+    metadata:
+      labels:
+        pod: app02-pod 
+        app: store-app 
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: busy-app 
+          image: busybox:1.28
+          command: ["printenv"] 
+          args: ["HOSTNAME", "KUBERNETES_PORT"]
+          resources: {}

@@ -1,0 +1,45 @@
+# Exercise 30-04 v3.2.0
+#
+# app-deployment-green.yaml (The current stable version)
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webstore-green-deploy
+  namespace: dev-ns
+  labels:
+    app: webstore
+    version: green
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: webstore-pod
+      version: green
+  template:
+    metadata:
+      labels:
+        app: webstore-pod
+        version: green
+    spec:
+      containers:
+      - name: webstore
+        image: nginx  # Stable image
+        ports:
+        - containerPort: 80
+        resources: {}
+
+---
+# app-service-green.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: webstore-green-svc  # Internal Service name for Green version
+  namespace: dev-ns
+spec:
+  selector:
+    app: webstore-pod
+    version: green
+  ports:
+  - port: 80
+    targetPort: 80

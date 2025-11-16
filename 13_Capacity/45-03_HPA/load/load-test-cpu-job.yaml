@@ -1,0 +1,23 @@
+# Exercise 44-03 v3.2.0
+#
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: load-test-cpu-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: k6-app
+        image: grafana/k6:latest # Official K6 image
+        command: ["k6", "run", "/k6/load-test-cpu.js"] # Executes the mounted script
+        volumeMounts:
+        - name: k6-script-volume
+          mountPath: /k6
+      restartPolicy: Never
+      volumes:
+      - name: k6-script-volume
+        configMap:
+          name: load-test-cpu-cm # References the ConfigMap defined above
+

@@ -1,0 +1,35 @@
+# Exercise: 15-04 v3.2.1
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my02-deploy 
+  labels:
+    app: store-app
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      pod: my02-pod
+  template:
+    metadata:
+      labels:
+        pod: my02-pod 
+    spec:
+      containers:
+        - name: web-app 
+          image: nginx 
+          ports:
+            - protocol: TCP
+              containerPort: 80
+          resources: {}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: disktype
+                  operator: In
+                  values:
+                    - hdd 

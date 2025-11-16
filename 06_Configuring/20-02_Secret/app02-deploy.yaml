@@ -1,0 +1,31 @@
+# Exercise 20-02 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app02-deploy 
+  labels:
+    app: store-app 
+spec:
+  replicas: 2  
+  selector:
+    matchLabels:
+      pod: app02-pod 
+  template:
+    metadata:
+      labels:
+        pod: app02-pod 
+    spec:
+      containers:
+      - name: app-app 
+        image: busybox:1.28
+        volumeMounts:
+          - name: secret-vol
+            mountPath: /etc/config/secret
+        command: ["sh", "-c", "echo 'Configs:' $(cat /etc/config/secret/app02-secret)  && sleep 3600"] 
+        resources: {}
+      volumes: 
+        - name: secret-vol
+          secret:
+            secretName: app02-secret

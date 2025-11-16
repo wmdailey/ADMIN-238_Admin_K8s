@@ -1,0 +1,60 @@
+# Exercise 28-05 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: web-check-ds 
+  namespace: default
+  labels:
+    app: web-check-ds 
+spec:
+  selector:
+    matchLabels:
+      name: web-check-pod
+  template:
+    metadata:
+      labels:
+        name: web-check-pod 
+    spec:
+      tolerations:
+      # Adding this toleration will allow the daemonset to run
+      # on the master nodes
+      # This is for exercise purposes only. 
+      - key: node-role.kubernetes.io/control-plane
+        effect: NoSchedule
+      initContainers:
+      - name: create-file
+        image: alpine
+        env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        command:
+        - "bin/sh"
+        - "-c"
+        - "echo 'Web URL check for '$NODE_NAME >  /usr/share/nginx/html/index.html"
+        volumeMounts:
+        - name: nginx-page
+          mountPath: /usr/share/nginx/html/
+      containers:
+      - name: web-check-pod 
+        image: nginx:1.20.0-alpine
+        volumeMounts:
+        - name: nginx-page
+          mountPath: /usr/share/nginx/html/
+        resources:
+          limits:
+            memory: 500Mi
+          requests:
+            cpu: 10m
+            memory: 100Mi
+        ports:
+        - containerPort: 80
+          hostPort: 80
+          name: "http"
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: nginx-page
+        emptyDir: {}

@@ -1,0 +1,15 @@
+# Exercise 28-02 v3.2.0
+#
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web01-svc 
+spec:
+  type: ClusterIP
+  selector:
+    pod: web01-pod
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

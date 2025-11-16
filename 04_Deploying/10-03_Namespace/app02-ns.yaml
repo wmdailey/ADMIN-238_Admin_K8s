@@ -1,0 +1,7 @@
+# Exercise 10-03 v3.2.0
+#
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: app02-ns

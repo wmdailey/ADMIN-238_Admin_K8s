@@ -1,0 +1,38 @@
+# Exercise 30-02 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webstore-deploy
+  labels:
+    app: webstore-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      pod: webstore-pod
+  template:
+    metadata:
+      labels:
+        pod: webstore-pod
+    spec:
+      containers:
+      - name: webstore
+        image: kennethreitz/httpbin
+        ports:
+        - containerPort: 80
+        resources: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webstore-svc
+spec:
+  selector:
+    pod: webstore-pod
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 8080 # Expose on port 8080 for the cluster
+      targetPort: 80 # Target the container's port 80

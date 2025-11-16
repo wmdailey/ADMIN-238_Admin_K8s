@@ -1,0 +1,40 @@
+# Exercise 15-07 v1.3.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web02-deploy 
+  labels:
+    app: store-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      pod: web02-pod
+  template:
+    metadata:
+      labels:
+        pod: web02-pod 
+    spec:
+      containers:
+        - image: nginx:1.24 
+          name: web-app 
+          ports:
+            - protocol: TCP
+              containerPort: 8080
+          resources: {}
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              preference:
+                matchExpressions:
+                  - key: arch
+                    operator: In
+                    values:
+                      - gpu
+      tolerations:
+        - key: env
+          operator: Exists
+          effect: NoSchedule

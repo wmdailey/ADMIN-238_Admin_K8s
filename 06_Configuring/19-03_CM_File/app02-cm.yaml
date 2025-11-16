@@ -1,0 +1,20 @@
+# Exercise 19-03 v3.2.0
+#
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app02-cm 
+data:
+  app02.conf: |
+    END_USER=dana_dev
+    GROUPS=dev,ops
+    ROLE=developer
+  app02.properties: |
+    QOP=auth
+    STAT.INTERVAL="36000"
+    PROVIDER=tvmx
+    INTERFACE=default
+    CHANNEL_ADDRESS=0.0.0.0:8686
+    INTERNAL_ADDRESS=0.0.0.0:9864
+    REDUNDANCY="true"

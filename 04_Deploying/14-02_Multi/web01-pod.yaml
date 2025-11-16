@@ -1,0 +1,26 @@
+# Exercise 14-02 v3.2.0
+#
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web01-pod
+  labels:
+    app: web-app
+  annotations:
+    description: "The sidecar container command uses a YAML syntax"
+spec:
+  containers:
+  - name: web-app
+    image: nginx:1.24
+    resources: {}
+
+# Sidecar container
+  - name: logging-sidecar
+    image: busybox:1.28
+    command:
+     - 'sh'
+     - '-c' 
+     - "while true; do echo sync logs; sleep 20; done"
+    resources: {}
+    

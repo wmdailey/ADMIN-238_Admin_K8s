@@ -1,0 +1,20 @@
+# Exercise: 14-02 v3.2.0
+#
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: broke-app
+spec:
+  containers:
+  - name: primary 
+    image: busybox:1.28
+    - sh
+    - -c
+    - echo "The app is running! && sleep 3600
+  - name: init-service
+    image: buzybo:1.32.9
+    command:
+    - sh
+    - -c
+    - sleeeep 20;

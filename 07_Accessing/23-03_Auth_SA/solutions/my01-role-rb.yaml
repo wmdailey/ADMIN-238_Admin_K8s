@@ -1,0 +1,29 @@
+# Exercise 23-03 v3.2.0
+#
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: read-role
+  namespace: devfin-ns
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "watch", "list"]
+- apiGroups: [""]
+  resources: ["pods/status"]
+  verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: read-rb
+  namespace: devfin-ns
+subjects:
+- kind: ServiceAccount
+  name: fin01-sa
+  namespace: devfin-ns 
+roleRef:
+  kind: Role
+  name: read-role
+  apiGroup: rbac.authorization.k8s.io

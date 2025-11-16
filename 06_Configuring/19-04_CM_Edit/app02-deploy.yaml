@@ -1,0 +1,43 @@
+# Exercise 19-04 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app02-deploy 
+  labels:
+    app: store-app 
+spec:
+  replicas: 2  
+  selector:
+    matchLabels:
+      pod: app02-pod 
+  template:
+    metadata:
+      labels:
+        pod: app02-pod 
+    spec:
+      containers:
+        - name: app-app
+          image: busybox:1.28
+          env:
+            - name: DB_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: app02-cm
+                  key: database.url
+            - name: API_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: app02-cm
+                  key: api.key
+          volumeMounts:
+            - name: app02-vol
+              mountPath: /etc/config
+              readOnly: true
+          command: ["/bin/sh", "-c", "echo 'Database URL: $DB_URL'; echo 'API Key: $API_KEY'; cat /etc/config/config.properties && sleep 3600"]
+          resources: {}
+      volumes:
+        - name: app02-vol
+          configMap:
+            name: app02-cm

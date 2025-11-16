@@ -1,0 +1,53 @@
+# Exercise 44-03 v3.2.0
+#
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: spike-test-memory-cm
+data:
+  spike-test-memory.js: |
+    import http from 'k6/http';
+    import { check, sleep } from 'k6';
+
+    // Using the MetalLB Load Balancer hostname
+    const BASE_URL = 'http://perf-test:8080';
+    const MEMORY_SIZE = 10; // Allocate a safe 10MB per iteration
+
+    export const options = {
+      // Scenario for a rapid spike test
+      scenarios: {
+        spike_test: {
+          executor: 'ramping-vus',
+          // Start with a moderate baseline, spike aggressively, and check recovery.
+          stages: [
+            { duration: '30s', target: 5 },    // Baseline ramp up to 5 VUs
+            { duration: '15s', target: 10 },   // RAPID SPIKE to 10 VUs in 15 seconds (Extreme Overload)
+            { duration: '1m', target: 10 },    // Maintain spike for 1 minute
+            { duration: '10s', target: 5 },    // Rapid return to baseline
+            { duration: '30s', target: 0 },    // Final ramp down
+          ],
+          gracefulStop: '5s',
+        },
+      },
+      // Thresholds: Relaxed to account for performance degradation and transient errors during the spike
+      thresholds: {
+        // Allowing up to 3 seconds for 95% of requests during the spike
+        'http_req_duration': ['p(95)<3000'], 
+        // Allowing up to 10% failure rate during the spike (to ensure service doesn't crash completely)
+        'http_req_failed': ['rate<0.10'], 
+      },
+    };
+
+    export default function () {
+      // Hit the memory test endpoint
+      const res = http.get(`${BASE_URL}/test-memory?mb=${MEMORY_SIZE}`);
+
+      check(res, { 
+        'status is 200': (r) => r.status === 200,
+        'body confirms allocation': (r) => r.body && r.body.includes(`Allocated ${MEMORY_SIZE} MB of memory`)
+      });
+      
+      // Using 2-second sleep for improved stability
+      sleep(2);
+    }

@@ -1,0 +1,18 @@
+# Exercise 11-02 v3.2.0
+#
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web03-pod
+  namespace: default
+  labels:
+    bu: fin
+    env: dev
+    tier: frontend
+spec:
+  containers:
+  - name: web-app
+    image: nginx:1.27.5-alpine
+    ports:
+    - containerPort: 80

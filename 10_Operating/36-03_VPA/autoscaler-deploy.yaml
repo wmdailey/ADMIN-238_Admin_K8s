@@ -1,0 +1,43 @@
+# Exercise 36-02 v3.2.0
+#
+---
+apiVersion: apps/v1 
+kind: Deployment 
+metadata: 
+  name: autoscaler-deploy
+spec: 
+  replicas: 1 
+  selector: 
+    matchLabels: 
+      app: autoscaler-pod 
+  template: 
+    metadata: 
+      labels: 
+        app: autoscaler-pod 
+    spec: 
+     containers: 
+       - name: load-generator 
+         image: wmdailey/edu-autoscaler:latest 
+         imagePullPolicy: Always
+         ports: 
+           - containerPort: 8080 
+         resources: 
+           requests: 
+             cpu: "250m" # 25% of one CPU core. HPA uses this as the baseline. 
+             memory: "256Mi" # 256 MiB of memory. HPA uses this as the baseline. 
+           limits: 
+             cpu: "500m" # Hard limit of 50% of CPU core 
+             memory: "1024Mi" # Hard limit of 1 GiB memory (adjust based on your node size)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: autoscaler-svc
+spec:
+  selector:
+    app: autoscaler-pod
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080

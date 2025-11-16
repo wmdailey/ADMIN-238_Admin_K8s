@@ -1,0 +1,40 @@
+# Exercise 09-02 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web01-deploy
+  labels:
+    app: store-app
+spec:
+  replicas:1
+  selector:
+    matchLabels:
+      pod: web01-pod
+  template:
+    metadata:
+      LAbels:
+        pod: web01-pod 
+spec:
+      containers:
+      - name: web-app
+        image: nginx:1.25.1
+        resources:
+        requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        name: log-sidecar
+        image: busybox:1.28
+        command: ['sh', -c', "while true; do echo sync logs; sleep 20; done"]
+        resources:
+            requests:
+
+            memory:  32Mi 
+            cpu: "125m"
+          limits:
+		memory: "64Mi"
+ 

@@ -1,0 +1,35 @@
+# Exercise 19-02 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app02-deploy 
+  labels:
+    app: store-app 
+spec:
+  replicas: 2  
+  selector:
+    matchLabels:
+      pod: app02-pod 
+  template:
+    metadata:
+      labels:
+        pod: app02-pod 
+    spec:
+      containers:
+      - name: app-app 
+        image: busybox:1.28
+        env:
+          - name: END_USER
+            valueFrom:
+              configMapKeyRef:
+                name: app02-cm
+                key: END_USER
+          - name: GROUPS 
+            valueFrom:
+              configMapKeyRef:
+                name: app02-cm
+                key: GROUPS 
+        command: ["/bin/sh", "-c", "printenv && sleep 3600"] 
+        resources: {}

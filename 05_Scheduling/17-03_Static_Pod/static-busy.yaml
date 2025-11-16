@@ -1,0 +1,17 @@
+# Exercise 17-03 v3.2.0
+#
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: static-busy
+  labels:
+    app: static-busy
+spec:
+  containers:
+    - name: static-busy
+      image: busybox
+      command:
+        - sleep
+        - "3600"
+      resources: {}

@@ -1,0 +1,127 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    cni.projectcalico.org/containerID: 9406d7ab16fb9eb0955a0c6d4f7262d8ae18cab5dee4cca37c00aac58454db2b
+    cni.projectcalico.org/podIP: 10.244.12.10/32
+    cni.projectcalico.org/podIPs: 10.244.12.10/32
+  creationTimestamp: "2025-10-26T18:39:02Z"
+  generation: 1
+  labels:
+    run: web01-pod
+  name: web01-pod
+  namespace: default
+  resourceVersion: "86485"
+  uid: e0328cfd-f9f4-408d-b430-6a790ec3d97d
+spec:
+  containers:
+  - image: nginx
+    imagePullPolicy: Always
+    name: web01-pod
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-9qs9t
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: edu-worker3
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: default
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - name: kube-api-access-9qs9t
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2025-10-26T18:39:04Z"
+    observedGeneration: 1
+    status: "True"
+    type: PodReadyToStartContainers
+  - lastProbeTime: null
+    lastTransitionTime: "2025-10-26T18:39:02Z"
+    observedGeneration: 1
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2025-10-26T18:39:04Z"
+    observedGeneration: 1
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2025-10-26T18:39:04Z"
+    observedGeneration: 1
+    status: "True"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2025-10-26T18:39:02Z"
+    observedGeneration: 1
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: containerd://b22797734561efb838eb6800087871ba53342f08c16cc881936c509f7bd55476
+    image: docker.io/library/nginx:latest
+    imageID: docker.io/library/nginx@sha256:029d4461bd98f124e531380505ceea2072418fdf28752aa73b7b273ba3048903
+    lastState: {}
+    name: web01-pod
+    ready: true
+    resources: {}
+    restartCount: 0
+    started: true
+    state:
+      running:
+        startedAt: "2025-10-26T18:39:04Z"
+    user:
+      linux:
+        gid: 0
+        supplementalGroups:
+        - 0
+        uid: 0
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-9qs9t
+      readOnly: true
+      recursiveReadOnly: Disabled
+  hostIP: 172.18.0.4
+  hostIPs:
+  - ip: 172.18.0.4
+  observedGeneration: 1
+  phase: Running
+  podIP: 10.244.12.10
+  podIPs:
+  - ip: 10.244.12.10
+  qosClass: BestEffort
+  startTime: "2025-10-26T18:39:02Z"

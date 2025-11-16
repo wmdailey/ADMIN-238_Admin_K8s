@@ -1,0 +1,19 @@
+# Exercise 30-04 v3.2.0
+#
+# envoy-gateway.yaml (Assuming MetalLB is already installed)
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: webstore-gateway
+  namespace: dev-ns
+spec:
+  gatewayClassName: envoy-gatewayclass # Or your specific class name
+  listeners:
+  - name: http
+    protocol: HTTP
+    port: 80
+    allowedRoutes:
+      namespaces:
+        # Use 'All' for simplicity in testing, otherwise use 'Selector'
+        from: All

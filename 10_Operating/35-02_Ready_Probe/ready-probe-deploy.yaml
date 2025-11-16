@@ -1,0 +1,72 @@
+# Exercise 35-02 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ready-probe-deploy
+  labels:
+    app: ready-probe-test
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      pod: ready-probe-pod
+  template:
+    metadata:
+      labels:
+        pod: ready-probe-pod
+    spec:
+      # This init container runs to completion before the main application container starts.
+      initContainers:
+      - name: busybox-init
+        image: busybox
+        command: ['sh', '-c', 'echo "Init container running..."; sleep 10; echo "Init container finished."']
+      containers:
+      - name: ready-probe-app
+        image: wmdailey/edu-health-probe:latest 
+        ports:
+        - containerPort: 8080
+        
+        # Define resource requests/limits (Good practice for Kubernetes scheduling)
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
+
+        # --- Readiness Probe Configuration (/readyz) ---
+        # Checks if the application is ready to accept traffic.
+        # A failure here removes the pod from the Service endpoints.
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8080
+          initialDelaySeconds: 5 # Wait 5 seconds before the first check
+          periodSeconds: 5       # The frequency (in seconds) that the 
+                                 # kubelet will perform the probe. 
+          timeoutSeconds: 3      # The number of seconds after which the 
+                                 # probe is considered to have failed,
+                                 # if the application hasn't responded.
+          failureThreshold: 3    # The minimum number of consecutive 
+                                 # failures required to be considered 
+                                 # failed, leading to the restart.
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ready-probe-svc
+spec:
+  # Use NodePort or LoadBalancer if testing externally. ClusterIP is sufficient for internal testing.
+  type: LoadBalancer
+  selector:
+    pod: ready-probe-pod
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+    name: http
+

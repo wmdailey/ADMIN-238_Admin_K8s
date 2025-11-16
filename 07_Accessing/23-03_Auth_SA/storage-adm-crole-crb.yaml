@@ -1,0 +1,29 @@
+# Exercise 23-03 v3.2.0
+#
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: storage-adm-crole
+rules:
+- apiGroups: [""]
+  resources: ["persistentvolumes"]
+  verbs: ["get", "watch", "list"]
+- apiGroups: ["storage.k8s.io"]
+  resources: ["storageclasses"]
+  verbs: ["get", "watch", "list"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: storage-adm-crb
+  namespace: devfin-ns
+subjects:
+- kind: ServiceAccount
+  name: fin01-sa 
+  namespace: devfin-ns
+roleRef:
+  kind: ClusterRole
+  name: storage-adm-crole
+  apiGroup: rbac.authorization.k8s.io

@@ -1,0 +1,47 @@
+# Exercise 44-03 v3.2.0
+#
+---
+# Deployment for the performance test application ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: perf-test-deploy
+  labels:
+    app: perf-test
+spec:
+  replicas: 2 # Start with 2 replicas for redundancy
+  selector:
+    matchLabels:
+      pod: perf-test-pod
+  template:
+    metadata:
+      labels:
+        pod: perf-test-pod
+    spec:
+      containers:
+      - name: perf-test-app
+        image: wmdailey/edu-perf-test:latest
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            cpu: "250m" # HPA requires requests to be set
+            memory: "256Mi" # Base memory request (50% target = 128Mi usage)
+          limits:
+            cpu: "1000m" 
+            memory: "1024Mi" # Base memory limit
+---
+# Service for MetalLB (LoadBalancer) ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: perf-test # Service name matches K6 BASE_URL for internal resolution
+spec:
+  type: LoadBalancer # MetalLB picks up this type and assigns an external IP
+  selector:
+    pod: perf-test-pod
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+---

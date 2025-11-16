@@ -1,0 +1,44 @@
+# Exercise 30-04 v3.2.0
+#
+# app-deployment-blue.yaml (The current stable version)
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webstore-blue-deploy
+  namespace: dev-ns
+  labels:
+    app: webstore
+    version: blue
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: webstore-pod
+      version: blue
+  template:
+    metadata:
+      labels:
+        app: webstore-pod
+        version: blue
+    spec:
+      containers:
+      - name: webstore
+        image: nginx  # Stable image
+        ports:
+        - containerPort: 80
+        resources: {}
+---
+# webstore-blue-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: webstore-blue-svc  # Internal Service name for Blue version
+  namespace: dev-ns
+spec:
+  selector:
+    app: webstore-pod
+    version: blue
+  ports:
+  - port: 80
+    targetPort: 80

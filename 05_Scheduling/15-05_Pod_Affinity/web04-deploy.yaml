@@ -1,0 +1,36 @@
+# Exercise 15-05 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web04-deploy 
+  labels: 
+    app: store-app 
+spec:
+  selector:
+    matchLabels:
+      pod: web04-pod
+  replicas: 5
+  template:
+    metadata:
+      labels:
+        pod: web04-pod
+        bu: fin
+    spec:
+      containers:
+      - name: my-app
+        image: nginx:1.24
+        resources: {}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: bu
+                  operator: In
+                  values:
+                  - fin
+              topologyKey: "kubernetes.io/hostname"

@@ -1,0 +1,11 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-deploy
+spec:
+  replicas: 4 # Production environment needs 4 replicas
+  template:
+    spec:
+      containers:
+      - name: nginx-app
+        image: nginx:stable-alpine # Use a different, "stable" image

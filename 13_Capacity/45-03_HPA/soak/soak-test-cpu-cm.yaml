@@ -1,0 +1,39 @@
+# Exercise 44-03 v3.2.0
+#
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: soak-test-cpu-cm
+data:
+  soak-test-cpu.js: |
+    // Placeholder content. The full script (using 6 VUs and 2s sleep) 
+    // must be pasted here when you create the file.
+    import http from 'k6/http';
+    import { check, sleep } from 'k6';
+
+    const BASE_URL = 'http://perf-test:8080';
+
+    export const options = {
+      scenarios: {
+        soak_test: {
+          executor: 'ramping-vus',
+          stages: [
+            { duration: '5m', target: 6 },
+            { duration: '2h', target: 6 },
+            { duration: '5m', target: 0 },
+          ],
+          gracefulStop: '30s',
+        },
+      },
+      thresholds: {
+        'http_req_duration': ['p(95)<500'],
+        'http_req_failed': ['rate<0.01'],
+      },
+    };
+
+    export default function () {
+      const res = http.get(`${BASE_URL}/test-cpu`);
+      check(res, { 'status is 200': (r) => r.status === 200 });
+      sleep(2);
+    }

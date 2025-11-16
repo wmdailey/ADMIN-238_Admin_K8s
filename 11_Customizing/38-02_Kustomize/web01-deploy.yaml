@@ -1,0 +1,26 @@
+# Exercise 37-03 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web01-deploy 
+  labels:
+    pod: web-pod
+spec:
+  replicas: 1 # Default replica count
+  selector:
+    matchLabels:
+      pod: web-pod
+  template:
+    metadata:
+      labels:
+        pod: web-pod
+    spec:
+      containers:
+      - name: nginx-app
+        image: nginx:1.25.3 # Default image tag
+        ports:
+          - containerPort: 80
+        resources: {}
+

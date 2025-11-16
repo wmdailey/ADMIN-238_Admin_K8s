@@ -1,0 +1,24 @@
+# Exercise 13-02 v3.2.0
+#
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web01-svc 
+  labels:
+    app: webapp-dev
+    svc: web01-svc
+spec:
+  selector:
+    name: web01-pod 
+  type: NodePort
+  ports:
+    - name: web01-port
+      # The port range for Node Port must be between 30,000 and 32,767
+      nodePort: 30080
+      # The port for Service 
+      port: 8080
+      # The port for the Pod
+      # If the target port attribute is not assigned the 
+      # target port will default to the port number for port:
+      targetPort: 80

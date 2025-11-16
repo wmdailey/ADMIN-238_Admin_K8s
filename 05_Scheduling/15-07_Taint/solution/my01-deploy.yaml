@@ -1,0 +1,39 @@
+# Exercise 15-07 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my01-deploy 
+  labels:
+    app: store-app 
+spec:
+  replicas: 2  
+  selector:
+    matchLabels:
+      pod: my01-pod 
+  template:
+    metadata:
+      labels:
+        pod: my01-pod 
+    spec:
+      containers:
+      - name: my-app 
+        image: busybox:1.28
+        command: ["sh", "-c", "echo Hello Kubernetes! && sleep 3600"] 
+        resources: {}
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              preference:
+                matchExpressions:
+                  - key: disktyp 
+                    operator: In
+                    values:
+                      - ssd
+      tolerations:
+        - key: env
+          operator: Equal
+          value: prd
+          effect: NoSchedule

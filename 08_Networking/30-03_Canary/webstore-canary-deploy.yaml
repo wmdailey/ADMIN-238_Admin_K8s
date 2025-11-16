@@ -1,0 +1,44 @@
+# Exercise 30-03 v3.2.0
+#
+# --- CANARY/NEW VERSION (10% Traffic) ---
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webstore-canary-deploy
+  labels:
+    app: webstore-app
+    version: canary
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      pod: webstore-canary-pod
+  template:
+    metadata:
+      labels:
+        pod: webstore-canary-pod
+    spec:
+      containers:
+      - name: webstore
+        image: kennethreitz/httpbin
+        ports:
+        - containerPort: 80
+        env:
+        - name: APP_VERSION
+          value: "canary" # Set environment variable for verification
+        resources: {}
+---
+# Service for the canary version
+apiVersion: v1
+kind: Service
+metadata:
+  name: webstore-canary-svc
+spec:
+  selector:
+    pod: webstore-canary-pod
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 80

@@ -1,0 +1,13 @@
+# Exercise 15-02 v3.2.0
+#
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web01-pod 
+spec:
+  nodeName: edu-worker3
+  containers:
+  - name: nginx
+    image: nginx
+    resources: {}

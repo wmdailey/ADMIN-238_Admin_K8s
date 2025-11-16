@@ -1,0 +1,14 @@
+# Exercise 16-06 v3.2.0
+#
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: app-limits
+spec:
+  limits:
+  - type: Container
+    min:
+      memory: 500Mi
+    max:
+      memory: 1Gi

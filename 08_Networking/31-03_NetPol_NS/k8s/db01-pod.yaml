@@ -1,0 +1,33 @@
+# Exercise 31-03 v3.2.0
+#
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: db01-pod 
+  namespace: db-ns
+  labels:
+    tier: database
+    env: db
+spec:
+  containers:
+    - name: redis
+      image: redis:7-alpine
+      ports:
+        - containerPort: 6379
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db01-svc
+  namespace: db-ns
+  labels:
+    tier: database
+spec:
+  type: ClusterIP 
+  selector:
+    pod: db01-pod
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379 

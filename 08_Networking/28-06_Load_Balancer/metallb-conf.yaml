@@ -1,0 +1,20 @@
+# Exercise 28-05 v3.2.0
+#
+---
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: load-balancer-pool
+  namespace: metallb-system
+spec:
+  addresses:
+  - 172.18.255.225-172.18.255.250
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: load-balancer-pool
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+  - load-balancer-pool

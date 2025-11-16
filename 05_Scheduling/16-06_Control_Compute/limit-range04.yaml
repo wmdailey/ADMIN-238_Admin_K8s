@@ -1,0 +1,22 @@
+# Exercise 16-06 v3.2.0
+# limit-range-memory.yaml
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+    name: app-limits 
+spec:
+    limits:
+      - type: Container
+        defaultRequest:
+          cpu: 100m
+          memory: 10Mi
+        default:
+           cpu: 100m
+           memory: 50Mi
+        min:
+          cpu: 100m
+          memory: 10Mi
+        max:
+          cpu: 500m
+          memory: 200Mi

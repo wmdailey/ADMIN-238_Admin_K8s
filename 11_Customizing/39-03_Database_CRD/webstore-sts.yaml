@@ -1,0 +1,32 @@
+# Exercise 38-03 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: webstore-sts
+  ownerReferences: # Links this resource back to the Database CR
+  - apiVersion: db.example.com/v1
+    kind: Database
+    name: prd-webstore-db
+spec:
+  selector:
+    matchLabels:
+      app: prd-webstore-db
+  serviceName: "prd-webstore-db-svc"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: prd-webstore-db
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:15
+        env: # Pulled from the specified secret
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: webstore-db-creds
+              key: password
+# ... Volume and PVC templates defined here ...

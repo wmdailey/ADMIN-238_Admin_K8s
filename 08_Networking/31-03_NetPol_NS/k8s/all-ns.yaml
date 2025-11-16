@@ -1,0 +1,23 @@
+# Exercise 31-03 v3.2.0
+#
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: db-ns
+  labels:
+    env: db
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: prd-ns
+  labels:
+    env: prd
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev-ns
+  labels:
+    env: dev

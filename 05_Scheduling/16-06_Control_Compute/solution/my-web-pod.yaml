@@ -1,0 +1,19 @@
+# Exercise 16-06 v3.2.0
+#
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-web-pod 
+spec:
+  containers:
+  - name: web-app 
+    image: nginx
+    resources:
+      requests:
+        cpu: "400m"
+        memory: "20Mi"
+      limits:
+        cpu: "800m"
+        memory: "40Mi"
+

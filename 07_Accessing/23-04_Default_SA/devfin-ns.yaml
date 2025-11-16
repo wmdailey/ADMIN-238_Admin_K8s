@@ -1,0 +1,9 @@
+# Exercise 23-04 v3.2.0
+#
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: devfin-ns 
+  labels:
+    app: fin-app

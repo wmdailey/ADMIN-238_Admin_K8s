@@ -1,0 +1,18 @@
+# Exercise 16-06 v3.2.0
+#
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: db02-pod 
+spec:
+  containers:
+  - name: db-app 
+    image: redis
+    resources:
+      requests:
+        cpu: "400m"
+        memory: "700Mi"
+      limits:
+        cpu: "800m"
+        memory: "1Gi"

@@ -1,0 +1,11 @@
+# Exercise 19-04 v3.2.0
+#
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my01-cm 
+data:
+  END_USER: omar_ops
+  GROUPS: ops
+  ROLE: operator 

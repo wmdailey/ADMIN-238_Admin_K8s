@@ -1,0 +1,15 @@
+# Exercise 22-04 v3.2.0
+#
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: storage-adm-crb
+subjects:
+- kind: User
+  name: dana_dev
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: storage-adm-crole
+  apiGroup: rbac.authorization.k8s.io

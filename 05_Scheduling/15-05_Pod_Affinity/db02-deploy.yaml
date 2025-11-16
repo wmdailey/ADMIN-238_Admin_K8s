@@ -1,0 +1,33 @@
+# Exercise 15-05 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db02-deploy 
+  labels:
+    app: store-app 
+spec:
+  selector:
+    matchLabels:
+      pod: db02-pod 
+  template:
+    metadata:
+      labels:
+        pod: db02-pod 
+        app: prdfin
+    spec:
+      containers:
+      - name: db-app 
+        image: redis 
+        resources: {}
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - prdfin 
+            topologyKey: "kubernetes.io/hostname"

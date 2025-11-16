@@ -1,0 +1,49 @@
+# Exercise 44-03 v3.2.0
+#
+---
+# Stress Test ConfigMap for CPU
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: stress-test-cpu-cm 
+data:
+  stress_test_cpu.js: | 
+    import http from 'k6/http';
+    import { check, sleep } from 'k6';
+
+    const BASE_URL = 'http://perf-test:8080';
+    // No MEMORY_SIZE constant needed for CPU test
+
+    export const options = {
+      scenarios: {
+        stress_test: {
+          executor: 'ramping-vus',
+          // Aggressive ramp-up designed to push CPU usage and trigger HPA
+          stages: [
+            { duration: '3m', target: 5 },    // Low load
+            { duration: '3m', target: 15 },   // Medium load (Expected to trigger HPA)
+            { duration: '3m', target: 30 },   // High load
+            { duration: '3m', target: 50 },   // Stress load
+            { duration: '1m', target: 0 },
+          ],
+          gracefulStop: '30s',
+        },
+      },
+      thresholds: {
+        // Relaxed thresholds to allow HPA to catch up
+        'http_req_duration': ['p(99)<5000'],
+        'http_req_failed': ['rate<0.15'],
+      },
+    };
+
+    export default function () {
+      // Hit the CPU test endpoint
+      const res = http.get(`${BASE_URL}/test-cpu`); 
+      
+      // Robust checks
+      check(res, {
+        'status is 200': (r) => r.status === 200,
+        'body confirms task started': (r) => r.body && r.body.includes(`Started a CPU performance test task`)
+      });
+      sleep(1); // Shorter sleep to increase the CPU load intensity
+    }

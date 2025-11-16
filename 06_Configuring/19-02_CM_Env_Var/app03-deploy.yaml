@@ -1,0 +1,60 @@
+# Exercise 19-02 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app03-deploy 
+  labels:
+    app: store-app 
+spec:
+  replicas: 2  
+  selector:
+    matchLabels:
+      pod: app03-pod 
+  template:
+    metadata:
+      labels:
+        pod: app03-pod 
+    spec:
+      containers:
+      - name: app-app 
+        image: busybox:1.28
+        env:
+          - name: END_USER
+            valueFrom:
+              configMapKeyRef:
+                name: app03-conf-cm
+                key: END_USER
+          - name: GROUPS 
+            valueFrom:
+              configMapKeyRef:
+                name: app03-conf-cm
+                key: GROUPS 
+          - name: ROLE 
+            valueFrom:
+              configMapKeyRef:
+                name: app03-conf-cm
+                key: ROLE 
+          - name: QOP 
+            valueFrom:
+              configMapKeyRef:
+                name: app03-prop-cm
+                key: QOP 
+          - name: STAT.INTERVAL 
+            valueFrom:
+              configMapKeyRef:
+                name: app03-prop-cm
+                key: STAT.INTERVAL 
+          - name: CHANNEL_ADDRESS 
+            valueFrom:
+              configMapKeyRef:
+                name: app03-prop-cm
+                key: CHANNEL_ADDRESS 
+          - name: REDUNDANCY 
+            valueFrom:
+              configMapKeyRef:
+                name: app03-prop-cm
+                key: REDUNDANCY 
+        command: ["/bin/sh", "-c", "printenv && sleep 3600"] 
+        resources: {}

@@ -1,0 +1,25 @@
+# Exercise 12-04 v3.2.0 
+#
+--- # Too many dashes
+apiVersion: apps/v1 # Incorrect version
+kind:  Deployment
+metadata:
+  name: my02-deploy
+  labels:
+    env: devl
+spec:
+  replicas: 3 # location must be outside of the template
+  selector: # location must be outside of the template
+    matchLabels:
+      env: devl
+  template:
+    metadata:
+     labels:
+        env: devl # the label and selector must match
+     name: nginx # Name has incorrect spacing
+    spec:
+      containers:
+      - image: nginx
+        name: nginx-container
+        ports:
+        - containerPort: 80

@@ -1,0 +1,54 @@
+# Exercise 18-02 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app05-deploy 
+  labels:
+    app: store-app 
+spec:
+  replicas: 2  
+  selector:
+    matchLabels:
+      pod: app05-pod 
+  template:
+    metadata:
+      labels:
+        pod: app05-pod 
+        app: prdsam
+    spec:
+      containers:
+        - name: busy-app 
+          image: busybox:1.28
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: POD_SERVICE_ACCOUNT
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.serviceAccountName
+          command: [ "sh", "-c"]
+          args:
+            - while true; do
+                echo sync logs;
+                echo -en '\n';
+                printenv NODE_NAME POD_NAME POD_NAMESPACE;
+                printenv POD_IP POD_SERVICE_ACCOUNT;
+               sleep 20;
+              done;
+          resources: {}

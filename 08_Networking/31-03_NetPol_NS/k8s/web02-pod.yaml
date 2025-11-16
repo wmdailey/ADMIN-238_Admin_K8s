@@ -1,0 +1,33 @@
+# Exercise 31-03 v3.2.0
+#
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web01-pod
+  namespace: prd-ns
+  labels:
+    tier: backend
+    env: prd 
+spec:
+  containers:
+    - name: nginx
+      image: nginx:1.21-alpine
+      ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web01-svc
+  namespace: prd-ns
+  labels:
+    tier: backend
+spec:
+  type: ClusterIP
+  selector:
+    pod: web01-pod
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

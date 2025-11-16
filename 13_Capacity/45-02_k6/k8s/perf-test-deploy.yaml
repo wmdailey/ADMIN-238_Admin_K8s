@@ -1,0 +1,46 @@
+# Exercise 33-02 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: perf-test-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      pod: perf-test-pod
+  template:
+    metadata:
+      labels:
+        pod: perf-test-pod
+    spec:
+      containers:
+      - name: perf-test
+        image: wmdailey/edu-perf-test:latest 
+        ports:
+        - containerPort: 8080
+        resources:
+          # Define resource limits to see the effect of the stress on CPU.
+          # The requests section ensures the pod gets a minimum amount of CPU.
+          requests:
+            cpu: "250m" # 25% of a core
+            memory: "512Mi"
+          # The limits section prevents the pod from consuming more than this amount.
+          # This helps in preventing a single pod from consuming all node resources.
+          limits:
+            cpu: "1000m" # 100% of a core
+            memory: "2048Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: perf-test-svc
+spec:
+  selector:
+    pod: perf-test-pod
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080

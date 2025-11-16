@@ -1,0 +1,36 @@
+# Exercise: 19-02 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app04-deploy 
+  labels:
+    app.kubernetes.io/name: app04-deploy 
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: app04-deploy 
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: app04-deploy 
+    spec:
+      containers:
+        - name: app-app
+          image: alpine:3
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: app04-vol
+              mountPath: /etc/config
+          command:
+            - /bin/sh
+            - -c
+            - while true; do echo "$(date +%D) The end user is $(cat /etc/config/END_USER)"; sleep 20; done;
+          resources: {}
+      volumes:
+        - name: app04-vol
+          configMap:
+            name: app04-cm

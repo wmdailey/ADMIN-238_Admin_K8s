@@ -1,0 +1,24 @@
+# Exercise 36-03 v3.2.0
+#
+---
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: autoscaler-vpa
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind:       Deployment
+    name:       autoscaler-deploy
+  updatePolicy:
+    updateMode: "Recreate"
+  resourcePolicy:
+    containerPolicies:
+    - containerName: '*'  # Applies this policy to all containers
+      controlledResources: ["cpu", "memory"]
+      minAllowed:
+        cpu: "250m"
+        memory: "256Mi"
+      maxAllowed:
+        cpu: "4000m" # VPA will not recommend more than 4 cores
+        memory: "3Gi" # VPA will not recommend more than 3Gi

@@ -1,0 +1,27 @@
+# Exerciser 12-03 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web03-deploy
+  labels:
+    app: store-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      pod: web03-pod
+  template:
+    metadata:
+      labels:
+        pod: web03-pod
+        type: frontend
+    spec:
+      containers:
+        - name: web-app
+          image: nginx
+          ports:
+            - name: http
+              containerPort: 80
+          resources: {}

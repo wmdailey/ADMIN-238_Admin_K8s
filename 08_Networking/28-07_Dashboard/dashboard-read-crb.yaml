@@ -1,0 +1,15 @@
+# Exercise 28-07 v3.2.0
+#
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: dashboard-read-crb
+subjects:
+- kind: ServiceAccount
+  name: dashboard-user
+  namespace: kubernetes-dashboard
+roleRef:
+  kind: ClusterRole
+  name: dashboard-read-crole
+  apiGroup: rbac.authorization.k8s.io

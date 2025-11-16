@@ -1,0 +1,33 @@
+# Exercise 44-03 v3.2.0
+#
+---
+#  Horizontal Pod Autoscaler (HPA) ---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: perf-test-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: perf-test-deploy
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource 
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50
+  - type: Resource
+    resource:
+      name: memory # Scaling on Memory utilization
+      target:
+        type: Utilization
+        averageUtilization: 50 # Target 50% memory utilization of the 128Mi request (64Mi)
+
+  behavior: # Configures scaling speed
+    scaleUp:
+      stabilizationWindowSeconds: 20 # Allows HPA to scale up quickly (20 seconds)
+---

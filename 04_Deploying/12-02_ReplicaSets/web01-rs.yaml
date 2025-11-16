@@ -1,0 +1,22 @@
+# Exercise 12-02 v3.2.0 
+#
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: web01-rs
+  labels:
+    app: store-app 
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      pod: web01-pod
+  template:
+    metadata:
+      labels:
+        pod: web01-pod
+    spec:
+      containers:
+        - name: web-app
+          image: nginx:1.25.0-alpine 

@@ -1,0 +1,16 @@
+# Exercise 29-02 v3.2.0
+#
+---
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  # The name here must match the 'ingressClassName: nginx' in your Ingress resource
+  name: nginx
+  # Optionally, make this the default IngressClass for Ingresses that don't specify one
+  # annotations:
+  #   ingressclass.kubernetes.io/is-default-class: "true"
+spec:
+  # This controller name is the standard one used by the community ingress-nginx controller.
+  # If you are using a different NGINX controller (e.g., NGINX Inc.'s official one), 
+  # this value may need to be adjusted.
+  controller: k8s.io/ingress-nginx

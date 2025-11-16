@@ -1,0 +1,11 @@
+# Exercise 19-04 v3.2.0
+#
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app01-cm 
+data:
+  END_USER: dana_dev
+  GROUPS: dev,ops
+  ROLE: developer

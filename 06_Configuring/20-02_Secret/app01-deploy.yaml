@@ -1,0 +1,36 @@
+# Exercise 20-02 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app01-deploy 
+  labels:
+    app: store-app 
+spec:
+  replicas: 2  
+  selector:
+    matchLabels:
+      pod: app01-pod 
+  template:
+    metadata:
+      labels:
+        pod: app01-pod 
+    spec:
+      containers:
+      - name: app-app 
+        image: busybox:1.28
+        env:
+          - name: USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: app01-secret 
+                key: USERNAME 
+          - name: PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: app01-secret 
+                key: PASSWORD
+        command: ["sh", "-c", "echo 'USERNAME:' $USERNAME; echo 'PASSWORD:' $PASSWORD && sleep 3600"] 
+        resources: {}
+

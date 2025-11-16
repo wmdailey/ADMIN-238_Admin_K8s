@@ -1,0 +1,43 @@
+# Exercise 19-04 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app01-deploy 
+  labels:
+    app: store-app 
+spec:
+  replicas: 2  
+  selector:
+    matchLabels:
+      pod: app01-pod 
+  template:
+    metadata:
+      labels:
+        pod: app01-pod 
+    spec:
+      containers:
+        - name: app-app
+          image: alpine:3 
+          env:
+            - name: END_USER 
+              valueFrom:
+                configMapKeyRef:
+                  name: app01-cm
+                  key: END_USER 
+            - name: GROUPS 
+              valueFrom:
+                configMapKeyRef:
+                  name: app01-cm
+                  key: GROUPS 
+            - name: ROLE
+              valueFrom:
+                configMapKeyRef:
+                  name: app01-cm
+                  key: ROLE
+          command:        
+            - /bin/sh
+            - -c
+            - while true; do echo "$(date +%T) 'END_USER:' $END_USER; 'GROUPS:' $GROUPS; 'ROLE:' $ROLE"; sleep 20; done;
+          resources: {}

@@ -1,0 +1,24 @@
+# Exercise 12-06 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: web04-rs
+  labels:
+    app: store-app 
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      pod: web04-pod
+  template:
+    metadata:
+      labels:
+        pod: web04-pod
+    spec:
+      containers:
+        - name: web-app
+          image: nginx:1.27.5-alpine
+          ports:
+            - containerPort: 80

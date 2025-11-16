@@ -1,0 +1,53 @@
+# Exercise 18-02 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app06-deploy 
+  labels:
+    app: store-app 
+spec:
+  replicas: 2  
+  selector:
+    matchLabels:
+      pod: app06-pod 
+  template:
+    metadata:
+      labels:
+        pod: app06-pod 
+        app: prdsam
+    spec:
+      containers:
+        - name: busy-app 
+          image: busybox:1.28
+          env:
+            - name: CPU_REQUEST 
+              valueFrom:
+                resourceFieldRef:
+                  containerName: busy-app
+                  resource: requests.cpu
+            - name: CPU_LIMIT 
+              valueFrom:
+                resourceFieldRef:
+                  containerName: busy-app
+                  resource: limits.cpu
+            - name: MEM_REQUEST 
+              valueFrom:
+                resourceFieldRef:
+                  containerName: busy-app
+                  resource: requests.memory
+            - name: MEM_LIMIT 
+              valueFrom:
+                resourceFieldRef:
+                  containerName: busy-app
+                  resource: limits.memory
+          command: [ "sh", "-c"]
+          args:
+            - while true; do
+                echo -en '\n';
+                printenv CPU_REQUEST CPU_LIMIT;
+                printenv MEM_REQUEST MEM_LIMIT;
+               sleep 20;
+              done;
+          resources: {}

@@ -1,0 +1,31 @@
+# Exercise 25-02 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app04-deploy 
+  labels:
+    app: store-app 
+spec:
+  replicas: 1  
+  selector:
+    matchLabels:
+      pod: app04-pod 
+  template:
+    metadata:
+      labels:
+        pod: app04-pod 
+    spec:
+      containers:
+      - name: busy-app 
+        image: busybox:1.37.0
+        command: ["sh", "-c", "echo Hello Kubernetes! && sleep 3600"] 
+        securityContext:
+          capabilities:
+            add: [ "NET_ADMIN", "SYS_TIME" ]
+        resources: {}
+      - name: sidecar
+        image: ubuntu
+        command: [ "sleep", "3600" ]
+        resources: {}

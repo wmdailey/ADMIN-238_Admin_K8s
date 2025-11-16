@@ -1,0 +1,14 @@
+# Exercise: 10-03 v3.2.0
+#
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web01-pod
+spec:
+  containers:
+  - name: web-app
+    image: nginx
+    ports:
+    - containerPort: 80
+    resources: {}

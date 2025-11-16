@@ -1,0 +1,72 @@
+# Exercise 35-04 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: health-probe-deploy
+  labels:
+    app: health-probe
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      pod: health-probe-pod
+  template:
+    metadata:
+      labels:
+        pod: health-probe-pod
+    spec:
+      containers:
+      - name: health-probe-app
+        image: wmdailey/edu-health-probe:latest 
+        ports:
+        - containerPort: 8080
+        
+        # Define resource requests/limits (Good practice for Kubernetes scheduling)
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
+
+        # READINESS PROBE (/readyz)
+        # Determines if the container is ready to accept traffic.
+        # If this fails, the service controller removes the pod from the service endpoints.
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8080
+          initialDelaySeconds: 5 # Wait 5 seconds before first check
+          periodSeconds: 10      # Check every 10 seconds
+          timeoutSeconds: 3      # Fail the probe if no response after 3 seconds
+          failureThreshold: 3    # Fail after 3 consecutive errors
+
+        # LIVENESS PROBE (/livez)
+        # Determines if the container is still alive (functional).
+        # If this fails, the kubelet kills and restarts the container.
+        livenessProbe:
+          httpGet:
+            path: /livez
+            port: 8080
+          initialDelaySeconds: 15 # Wait 15 seconds after starting before first check
+          periodSeconds: 10       # Check every 10 seconds
+          timeoutSeconds: 3       # Fail the probe if no response after 3 seconds
+          failureThreshold: 3     # Restart the container after 3 consecutive errors
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: health-probe-svc
+spec:
+  # Use NodePort or LoadBalancer if testing externally. ClusterIP is sufficient for internal testing.
+  type: LoadBalancer
+  selector:
+    pod: health-probe-pod
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+    name: http

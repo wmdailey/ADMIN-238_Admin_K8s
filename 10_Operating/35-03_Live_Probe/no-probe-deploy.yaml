@@ -1,0 +1,51 @@
+# Exercise 35-03 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: no-probe-deploy
+  labels:
+    app: no-probe
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      pod: no-probe-pod
+  template:
+    metadata:
+      labels:
+        pod: no-probe-pod
+    spec:
+      containers:
+      - name: no-probe-app
+        image: wmdailey/edu-health-probe:latest 
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        
+        # Define resource requests/limits (Good practice for Kubernetes scheduling)
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: no-probe-svc
+spec:
+  # Use NodePort or LoadBalancer if testing externally. ClusterIP is sufficient for internal testing.
+  type: LoadBalancer
+  selector:
+    pod: no-probe-pod
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+    name: http
+

@@ -1,0 +1,26 @@
+# Exerciser 12-03 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web04-deploy
+  namespace: default
+  labels:
+    app: store-app
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      pod: web04-pod
+  template:
+    metadata:
+      labels:
+        pod: web04-pod
+    spec:
+      containers:
+      - name: web-app
+        image: nginx:1.28.0
+        resources: {}

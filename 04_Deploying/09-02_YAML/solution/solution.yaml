@@ -1,0 +1,40 @@
+# Exercise 09-02 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web01-deploy
+  labels:
+    app: store-app
+spec:
+  replicas: 1 #Must have a space after :
+  selector:
+    matchLabels:
+      pod: web01-pod
+  template:
+    metadata:
+      labels:
+        pod: web01-pod 
+    spec:   #Must have spaces and alignment
+      containers:
+      - name: web-app
+        image: nginx:1.25.1
+        resources:
+          requests: # The attribute is resources:requests:memory. Each must be indented by two spaces 
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+      - name: log-sidecar #Containers is a list of containers, requires a dash "-"
+        image: busybox:1.28
+        command: ['sh', '-c', "while true; do echo sync logs; sleep 20; done"]
+        resources:
+          requests: # The attribute is resources:requests:memory. Each must be indented by two spaces
+          # The line space does affect the the attributes, use spacing for readability
+            memory: "32Mi"
+            cpu: "125m"
+          limits:
+            memory: "64Mi" # The use of tabs is not allowed, it must be spaces
+ 

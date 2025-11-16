@@ -1,0 +1,44 @@
+# Exercise 19-04 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app03-deploy 
+  labels:
+    app.kubernetes.io/name: store-app
+spec:
+  replicas: 2  
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: store-app
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: store-app
+    spec:
+      containers:
+        - name: web-app
+          image: nginx 
+          volumeMounts:
+            - name: shared-vol
+              mountPath: /usr/share/nginx/html
+          resources: {}
+        - name: app-app
+          image: alpine:3
+          volumeMounts:
+            - name: shared-vol
+              mountPath: /pod-data
+            - name: app03-vol
+              mountPath: /etc/config
+          command: 
+            - /bin/sh
+            - -c
+            - while true; do echo "Setting color to $(cat /etc/config/COLOR)" > /pod-data/index.html;  sleep 20; done;
+          resources: {}
+      volumes:
+        - name: shared-vol
+          emptyDir: {}
+        - name: app03-vol
+          configMap:
+            name: app03-cm

@@ -1,0 +1,13 @@
+# Exercise 30-04 v3.2.0
+#
+# httproute-switch-to-green.yaml
+# ... (metadata and parentRefs are the same) ...
+---
+  rules:
+  - backendRefs:
+    - name: myapp-blue-svc
+      port: 80
+      weight: 0  # Traffic instantly cut to Blue
+    - name: myapp-green-svc
+      port: 80
+      weight: 100 # Traffic instantly switched to Green

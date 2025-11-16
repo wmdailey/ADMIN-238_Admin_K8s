@@ -1,0 +1,85 @@
+# Exercise 25-03 v3.2.0
+#
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: prdmsg-ns
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: msg01-cm 
+  namespace: prdmsg-ns
+data:
+  mosquitto.conf: |
+    log_dest stdout
+    log_type all
+    log_timestamp true 
+    listener 9001 
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: msg01-secret
+  namespace: prdmsg-ns
+type: Opaque
+data:
+  secret.file: |
+    VGhlRmFzdFJlZEZveEp1bXBlZE92ZXJ0aGVMYXp5QnJvd25Eb2cK
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: msg01-deploy 
+  namespace: prdmsg-ns
+  labels:
+    app: msg-app 
+spec:
+  replicas: 1  
+  selector:
+    matchLabels:
+      pod: msg01-pod 
+  template:
+    metadata:
+      labels:
+        pod: msg01-pod 
+    spec:
+      containers:
+      - name: msg-app 
+        image: eclipse-mosquitto:1.6.2 
+        ports:
+          - containerPort: 1883
+        volumeMounts:
+          - name: mosquitto-config
+            mountPath: /mosquitto/config
+          - name: mosquitto-secret
+            mountPath: /mosquitto/secret
+            readOnly: true
+      volumes: 
+        - name: mosquitto-config
+          configMap:
+            name: msg01-cm
+        - name: mosquitto-secret
+          secret:
+            secretName: msg01-secret
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: msg01-svc
+  namespace: prdmsg-ns
+  labels:
+    app: store-app
+    tier: backend
+spec:
+  selector:
+    pod: msg01-pod
+  ports:
+    - protocol: TCP
+      port: 1883
+      targetPort: 1883 

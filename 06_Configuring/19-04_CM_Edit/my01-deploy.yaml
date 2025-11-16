@@ -1,0 +1,44 @@
+# Exercise 19-04 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my01-deploy 
+  labels:
+    app: store-app 
+spec:
+  replicas: 2  
+  selector:
+    matchLabels:
+      pod: my01-pod 
+  template:
+    metadata:
+      labels:
+        pod: my01-pod 
+    spec:
+      containers:
+        - name: app-app
+          image: busybox:1.28
+          env:
+            - name: END_USER 
+              valueFrom:
+                configMapKeyRef 
+                  name: my01-cm
+                  key: END_USER 
+            - name: GROUPS 
+              valueFrom:
+                configMapKeyRef:
+                  name: my01-cm
+                  key: GROUPS 
+            - name: ROL3
+              valueFrom:
+                configMapKeyRef:
+                  name: my01-cm
+                  key: ROLE
+          volumeMounts:
+		# Configure the volume mount to the container
+          command: ["/bin/sh", "-c", "echo 'END_USER: $END_USER'; echo 'GROUPS: $GROUPS'; echo 'ROLE: $ROLE' && sleep 3600"]
+          resources: {}
+      volumes:
+	# Configure the volume mount to the Pod

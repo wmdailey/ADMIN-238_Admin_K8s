@@ -1,0 +1,16 @@
+# Exercise 12-06 v3.2.0
+#
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: db03-pod
+  namespace: default
+  labels:
+    bu: fin
+    env: prd
+    tier: db
+spec:
+  containers:
+  - name: db-app
+    image: redis

@@ -1,0 +1,23 @@
+# Exercise 13-02 v3.2.0
+#
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my01-svc 
+  namespace: my01-ns
+  labels:
+    app: webapp-dev
+    svc: my01-svc
+spec:
+  selector:
+    name: my01-pod 
+  type: ClusterIP
+  ports:
+    - name: my01-port
+      # The port for Service 
+      port: 8080
+      # The port for the Pod
+      # If the target port attribute is not assigned the 
+      # target port will default to the port number for port:
+      targetPort: 80

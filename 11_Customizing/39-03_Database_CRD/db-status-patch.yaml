@@ -1,0 +1,11 @@
+# Exercise 38-03 v3.2.0
+#
+---
+apiVersion: db.example.com/v1
+kind: Database
+metadata:
+  name: prd-webstore-db
+status:
+  connectionURL: prd-webstore-db-svc.default.svc.cluster.local:5432 # Internal connection string
+  deploymentState: Ready                                            # Status update
+  pvcName: prd-webstore-db-pv-0                                     # Name of the created storage volume

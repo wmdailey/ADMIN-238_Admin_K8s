@@ -1,0 +1,40 @@
+# Exercise 15-04 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web04-deploy 
+  labels:
+    app: store-app
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      pod: web04-pod
+  template:
+    metadata:
+      labels:
+        pod: web04-pod 
+    spec:
+      containers:
+        - name: web-app 
+          image: nginx:1.24 
+          ports:
+            - protocol: TCP
+              containerPort: 8080
+          resources: {}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: arch
+                  operator: In
+                  values:
+                    - arm 
+              - matchExpressions:
+                - key: disktype
+                  operator: In
+                  values:
+                    - hdd 

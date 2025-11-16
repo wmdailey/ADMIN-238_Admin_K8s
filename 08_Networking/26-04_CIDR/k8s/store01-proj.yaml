@@ -1,0 +1,43 @@
+# Exercise 26-04 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: store01-deploy
+  labels:
+    app: store-app 
+    tier: appserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      pod: store01-pod
+  template:
+    metadata:
+      labels:
+        pod: store01-pod
+    spec:
+      containers:
+        - name: web-app
+          image: nginx:1.24
+          ports:
+            - name: http 
+              containerPort: 80
+              protocol: TCP
+          resources: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: store01-svc
+  labels:
+    app: store-app
+    tier: appserver
+spec:
+  selector:
+    pod: store01-pod
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 80

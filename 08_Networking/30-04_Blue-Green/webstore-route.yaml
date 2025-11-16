@@ -1,0 +1,22 @@
+# Exercise 30-04 v3.2.0
+#
+# httproute-initial-blue.yaml
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: webstore-route
+  namespace: dev-ns
+spec:
+  parentRefs:
+  - name: webstore-gateway
+  hostnames:
+  - "webstore.local"
+  rules:
+  - backendRefs:
+    - name: webstore-blue-svc  # Routes all traffic to the Blue Service
+      port: 80
+      weight: 100
+    - name: webstore-green-svc
+      port: 80
+      weight: 0

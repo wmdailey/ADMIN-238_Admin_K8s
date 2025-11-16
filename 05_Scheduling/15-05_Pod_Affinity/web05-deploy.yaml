@@ -1,0 +1,44 @@
+# Exercise 15-05 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web05-deploy
+  labels:
+    app: store-app 
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: web05-pod
+  template:
+    metadata:
+      labels:
+        app: web05-pod
+    spec:
+      containers:
+      - name: web-app
+        image: nginx:1.24
+        resources: {}
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - prdfin 
+            topologyKey: "kubernetes.io/hostname"
+            namespaceSelector: {}
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - prdsam 
+            topologyKey: "kubernetes.io/hostname"
+            namespaceSelector: {}

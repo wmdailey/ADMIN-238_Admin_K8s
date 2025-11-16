@@ -1,0 +1,19 @@
+# Exercise 12-06 v3.2.0
+#
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app01-pod
+  namespace: default
+  labels:
+    bu: ops
+    env: prd
+    tier: mid
+spec:
+  containers:
+  - name: busy-app 
+    image: busybox
+    command:
+    - sleep
+    - "4800"

@@ -1,0 +1,26 @@
+# Exercise 23-03 v3.2.0
+#
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: node-adm-crole
+rules:
+- apiGroups: [""]
+  resources: ["nodes"]
+  verbs: ["get", "watch", "list", "create", "delete"]
+
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: node-adm-crb 
+  namespace: devfin-ns
+subjects:
+- kind: ServiceAccount 
+  name: fin01-sa 
+  namespace: devfin-ns
+roleRef:
+  kind: ClusterRole
+  name: node-adm-crole
+  apiGroup: rbac.authorization.k8s.io

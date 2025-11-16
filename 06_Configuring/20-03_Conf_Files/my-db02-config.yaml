@@ -1,0 +1,59 @@
+# Exercise: 20-03 v3.2.0
+#
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config
+data:
+  mysql.conf: |
+    [mysqld]
+    port=3306
+    socket=/tmp/mysql.sock
+    key_buffer_size=16M
+    max_allowed_packet=128M
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysql-secret
+type: Opaque
+data:
+  secret.file: |
+    c29tZXN1cGVyc2VjcmV0IGZpbGUgY29udGVudHMgbm9ib2R5IHNob3VsZCBzZWU=
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db02-deploy
+  labels:
+    app: store-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      pod: db02-pod
+  template:
+    metadata:
+      labels:
+        pod: db02-pod
+    spec:
+      containers:
+      - name: db02-pod
+        image: busybox:1.28
+        volumeMounts:
+        - name: db02-config
+          mountPath: /mysql/db-config
+        - name: db-secret
+          mountPath  /mysql/db-secret
+          readOnly: true
+        command: ['sh', '-c', "cat /mysql/db-config/mysql.conf; ls /mysql/db-secret/ && sleep 3600"]
+        resources: {}
+      volumes:
+        - name: db-config
+          configMap:
+            name: mysql-config
+        - name: db-secret
+          secret:
+            secretName: dbb01-secret

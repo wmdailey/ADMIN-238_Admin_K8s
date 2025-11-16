@@ -1,0 +1,49 @@
+# Exercise 44-03 v3.2.0
+#
+---
+#  Stress Test ConfigMap for Memory 
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: stress-test-memory-cm
+data:
+  stress_test_memory.js: |
+    import http from 'k6/http';
+    import { check, sleep } from 'k6';
+
+    const BASE_URL = 'http://perf-test:8080';
+    const MEMORY_SIZE = 10; // Allocate 10MB per iteration
+
+    export const options = {
+      scenarios: {
+        stress_test: {
+          executor: 'ramping-vus',
+          // Adjusted to a short 5-minute profile for quick testing
+          stages: [
+            { duration: '1m', target: 5 },    // Quick ramp to baseline load
+            { duration: '2m', target: 10 },   // Stress period to push HPA limits
+            { duration: '1m', target: 15 },   // Find the absolute breaking point
+            { duration: '1m', target: 0 },    // Ramp down
+          ],
+          gracefulStop: '30s',
+        },
+      },
+      // Relaxed thresholds, designed to show failure when the system is overwhelmed.
+      thresholds: {
+        'http_req_duration': ['p(99)<5000'],
+        'http_req_failed': ['rate<0.15'],
+      },
+    };
+
+    export default function () {
+      // Hit the memory test endpoint
+      const res = http.get(`${BASE_URL}/test-memory?mb=${MEMORY_SIZE}`);
+      
+      // Robust checks
+      check(res, {
+        'status is 200': (r) => r.status === 200,
+        'body confirms allocation': (r) => r.body && r.body.includes(`Allocated ${MEMORY_SIZE} MB of memory`)
+      });
+      sleep(2); // Sleep interval for stability
+    }
+---

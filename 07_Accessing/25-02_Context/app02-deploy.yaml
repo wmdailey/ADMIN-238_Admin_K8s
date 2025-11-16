@@ -1,0 +1,35 @@
+# Exercise 25-02 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app02-deploy 
+  labels:
+    app: store-app 
+spec:
+  replicas: 1  
+  selector:
+    matchLabels:
+      pod: app02-pod 
+  template:
+    metadata:
+      labels:
+        pod: app02-pod 
+    spec:
+      securityContext:
+        runAsUser: 1012
+        runAsGroup: 3012
+        fsGroup: 2000
+      containers:
+        - name: busy-app 
+          image: busybox:1.37.0
+          command: ["sh", "-c", "echo Hello Kubernetes! && sleep 3600"] 
+          volumeMounts:
+            - name: sec-ctx-vol
+              mountPath: /data/demo
+          resources: {}
+      volumes:  
+        - name: sec-ctx-vol
+          emptyDir: {}
+    

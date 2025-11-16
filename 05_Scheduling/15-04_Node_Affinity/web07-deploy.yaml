@@ -1,0 +1,45 @@
+# Exercise 15-04 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web07-deploy 
+  labels:
+    app: store-app
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      pod: web07-pod
+  template:
+    metadata:
+      labels:
+        pod: web07-pod 
+    spec:
+      containers:
+        - name: web-app 
+          image: nginx:1.24 
+          ports:
+          - protocol: TCP
+            containerPort: 8080
+          resources: {}
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: arch
+                    operator: In
+                    values:
+                      - arm
+            - weight: 20
+              preference:
+                matchExpressions:
+                  - key: disktype
+                    operator: In
+                    values:
+                      - ssd
+
+

@@ -1,0 +1,33 @@
+# Exercise 31-03 v3.2.0
+#
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bak01-pod
+  namespace: default
+  labels:
+    tier: backup
+    env: dev
+spec:
+  containers:
+    - name: nginx
+      image: nginx:1.21-alpine
+      ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bak01-svc
+  namespace: default
+  labels:
+    tier: backup
+spec:
+  type: ClusterIP
+  selector:
+    pod: bak01-pod
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

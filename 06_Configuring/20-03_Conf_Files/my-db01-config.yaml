@@ -1,0 +1,56 @@
+# Exercise: 20-03 v3.2.0
+#
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db01-cm
+data:
+  DB_HOST: mysql-serv
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db01-secret
+type: Opaque
+data:
+  USERNAME: b21hcl9vcHMK 
+  PASSWORD: QmFkUGFzc0AxCg== 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db01-deploy 
+  labels:
+    app: store-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      pod: db01-pod
+  template:
+    metadata:
+      labels:
+        pod: db01-pod 
+    spec:
+      containers:
+      - name: db-app 
+        image: busybox:1.28
+        env:
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: db01-secret
+              key: USERNAME
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db01-sec
+              key: PASSWORD
+        - name: MYSQL_SERVER 
+          valueFrom: 
+            configMapKeyRef:
+              name: db01-cm
+              key: MYSQL_HOST 
+        command: ['sh', '-c', "echo 'MYSQL_USER:' $MYSQL_USER 'MYSQL_PASSWORD:' MYSQL_PASSWORD 'MYSQL_SERVER:' MYSQL_SERVER && sleep 3600"]
+        resources: {}

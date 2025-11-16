@@ -1,0 +1,35 @@
+# Exercise 15-02 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web01-deploy 
+  labels:
+    app: store-app
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      name: web01-pod
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        name: web01-pod 
+    spec:
+      nodeSelector:
+        disktype: ssd
+      containers:
+      - name: web-app
+        image: nginx:1.24 
+        ports:
+          - protocol: TCP
+            containerPort: 80
+        resources: {}

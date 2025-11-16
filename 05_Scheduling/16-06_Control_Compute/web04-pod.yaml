@@ -1,0 +1,12 @@
+# Exercise 16-06 v3.2.0
+#
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web04-pod 
+spec:
+  containers:
+  - name: web-app 
+    image: nginx
+    resources: {}

@@ -1,0 +1,18 @@
+# Exercise 12-06 v3.2.0
+#
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web02-pod
+  namespace: default
+  labels:
+    bu: fin
+    env: prd
+    tier: frontend
+spec:
+  containers:
+  - name: web-app
+    image: nginx:1.27.5-alpine
+    ports:
+    - containerPort: 80

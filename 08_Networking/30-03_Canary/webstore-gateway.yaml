@@ -1,0 +1,17 @@
+# Exercise 30-03 v3.2.0
+#
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: webstore-gateway
+spec:
+  gatewayClassName: envoy-gatewayclass 
+  listeners:
+  - name: http
+    protocol: HTTP
+    port: 80
+    allowedRoutes:
+      namespaces:
+        # Use 'All' for simplicity in testing, otherwise use 'Selector'
+        from: All

@@ -1,0 +1,39 @@
+# Exercise 28-05 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: logtool-ds
+  namespace: default
+  labels:
+    app: logtool-ds
+spec:
+  selector:
+    matchLabels:
+      pod: logtool-pod
+  template:
+    metadata:
+      labels:
+        pod: logtool-pod
+    spec:
+      tolerations:
+      # Adding this toleration will allow the daemonset to run
+      # on the master nodes
+      # This is for exercise purposes only. 
+       - key: node-role.kubernetes.io/control-plane
+         effect: NoSchedule
+      containers:
+      - name: logtool-app
+        image: alpine:latest
+        env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        command:
+        - "bin/sh"
+        - "-c"
+        - "echo 'Logging for '$NODE_NAME; while true; do sleep 300s ; done;"
+        resources: {}
+      terminationGracePeriodSeconds: 30

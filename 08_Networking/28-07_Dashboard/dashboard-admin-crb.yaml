@@ -1,0 +1,15 @@
+# Exercise 28-07 v3.2.0
+#
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: dashboard-admin-crb
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin # The built-in role with full admin rights
+subjects:
+- kind: ServiceAccount
+  name: dashboard-admin # The name created in Step 1
+  namespace: kubernetes-dashboard

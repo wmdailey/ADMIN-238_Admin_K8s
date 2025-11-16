@@ -1,0 +1,28 @@
+# Exercise 13-02 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my02-deploy
+  namespace: my02-ns
+  labels:
+    app: webapp-dev 
+    name: my02-deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      name: my02-pod
+  template:
+    metadata:
+      labels:
+        name: my02-pod
+    spec:
+      containers:
+      - name: web-app
+        image: nginx
+        ports:
+          - containerPort: 80
+        resources: {}
+        

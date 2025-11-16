@@ -1,0 +1,38 @@
+# Exercise 20-03 v3.2.0
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: msg01-deploy 
+  labels:
+    app: msg-app 
+spec:
+  replicas: 1  
+  selector:
+    matchLabels:
+      pod: msg01-pod 
+  template:
+    metadata:
+      labels:
+        pod: msg01-pod 
+    spec:
+      containers:
+      - name: msg-app 
+        image: eclipse-mosquitto:1.6.2 
+        ports:
+          - containerPort: 1883
+        volumeMounts:
+          - name: mosquitto-config
+            mountPath: /mosquitto/config
+          - name: mosquitto-secret
+            mountPath: /mosquitto/secret
+            readOnly: true
+        resources: {}
+      volumes: 
+        - name: mosquitto-config
+          configMap:
+            name: msg01-cm
+        - name: mosquitto-secret
+          secret:
+            secretName: msg01-secret
