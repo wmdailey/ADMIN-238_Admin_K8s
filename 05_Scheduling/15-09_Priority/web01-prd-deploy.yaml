@@ -1,0 +1,33 @@
+# Exercise 15-09 v3.2.0
+# This Deployment is critical and is should not be preempted.
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web01-prd-deploy
+  labels:
+    app: web01-prd
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      pod: web01-prd-pod
+  template:
+    metadata:
+      labels:
+        pod: web01-prd-pod
+    spec:
+      # Using 'high-priority-pc' from the existing PriorityClass definitions.
+      priorityClassName: high-priority-pc
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports: 
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+            limits:
+              cpu: "1"
+              memory: "2Gi"

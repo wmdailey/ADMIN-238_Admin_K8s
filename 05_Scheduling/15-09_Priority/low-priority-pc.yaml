@@ -1,0 +1,10 @@
+# Exercise 15-09 v3.2.0
+#
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: low-priority-pc
+value: 100
+globalDefault: false
+description: "This priority class is for best-effort or non-critical batch jobs."
