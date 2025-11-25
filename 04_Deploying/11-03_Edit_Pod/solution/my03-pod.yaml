@@ -1,13 +1,13 @@
-# Exercise: 11-03 v1.2.0
+# Exercise: 11-03 v3.2.0
 #
 ---
-apiVersion: apps/v1
+apiVersion: v1
 kind: Pod
 metadata:
   name: my03-pod
 spec:
   containers:
-  - name: my-app
-    image: nginx:1.28.0
-  ports:
-  - containerPort: 80
+    - name: my-app
+      image: nginx:1.28.0
+      ports:
+        - containerPort: 80
