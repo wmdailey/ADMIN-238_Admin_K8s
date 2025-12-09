@@ -11,7 +11,7 @@ spec:
     - -c
     - echo "The app is running! && sleep 3600"
   - name: init-service
-    image: busybox:1.32.9
+    image: busybox:1.37.0
     command:
     - sh
     - -c

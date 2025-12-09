@@ -31,7 +31,7 @@ spec:
       containers:
       - image: nginx
         imagePullPolicy: Always
-        name: nginx
+        name: nginx:1.28-alpine
         resources: {}
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
