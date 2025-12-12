@@ -13,7 +13,10 @@ spec:
     matchLabels:
       name: web01-pod
   strategy:
-    type: Recreate
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
   template:
     metadata:
       labels:
