@@ -17,7 +17,7 @@ spec:
       labels:
         pod: web01-dev-pod
     spec:
-      # Using 'high-priority-pc' from the existing PriorityClass definitions.
+      # Using 'low-priority-pc' from the existing PriorityClass definitions.
       priorityClassName: low-priority-pc
       containers:
         - name: nginx
