@@ -1,5 +1,7 @@
 # Exercise 03-02 v3.2.0
 #
+# The hostPath must be hard coded to the Users home directory.
+# Edit as required.
 ---
 apiVersion: kind.x-k8s.io/v1alpha4
 kind: Cluster
@@ -30,7 +32,7 @@ nodes:
     protocol: TCP
   # --- SECURE MOUNT START ---
   extraMounts:
-  - hostPath: /home/training/.docker/config.json
+  - hostPath: /Users/wdailey/.docker/config.json
     containerPath: /var/lib/kubelet/config.json
     readOnly: true
   # --- SECURE MOUNT END ---
@@ -43,20 +45,20 @@ nodes:
       kubeletExtraArgs:
         system-reserved: "memory=4Gi"
   extraMounts:
-  - hostPath: /home/training/.docker/config.json
+  - hostPath: /Users/wdailey/.docker/config.json
     containerPath: /var/lib/kubelet/config.json
     readOnly: true
 
 - role: worker
   kubeadmConfigPatches: *worker_patch
   extraMounts:
-  - hostPath: /home/training/.docker/config.json
+  - hostPath: /Users/wdailey/.docker/config.json
     containerPath: /var/lib/kubelet/config.json
     readOnly: true
 
 - role: worker
   kubeadmConfigPatches: *worker_patch
   extraMounts:
-  - hostPath: /home/training/.docker/config.json
+  - hostPath: /Users/wdailey/.docker/config.json
     containerPath: /var/lib/kubelet/config.json
     readOnly: true
