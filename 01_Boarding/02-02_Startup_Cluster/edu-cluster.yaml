@@ -1,4 +1,4 @@
-# Exercise 02-03 v3.2.0
+# Exercise 02-03 v3.3.0
 #
 # A basic configuration file for a KIND cluster.
 # This creates a cluster with four nodes: one control plane and three workers.

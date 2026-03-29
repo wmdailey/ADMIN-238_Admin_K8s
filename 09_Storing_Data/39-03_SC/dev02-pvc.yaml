@@ -1,0 +1,16 @@
+# Exercise: 39-03 v3.3.0
+#
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dev02-pvc
+  namespace: dev-ns
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: dev-sc
+  resources:
+    requests:
+      storage: 80Mi
+

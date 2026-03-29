@@ -24,8 +24,8 @@
 
 # Title: clean-web.sh
 # Author: WKD
-# Version: 3.2.0
-# Date: 17JUN25
+# Exercise: 03-02
+# Version: 3.3.0
 
 # DEBUG
 #set -x
