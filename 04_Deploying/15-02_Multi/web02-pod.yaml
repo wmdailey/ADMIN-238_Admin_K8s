@@ -12,11 +12,11 @@ metadata:
 spec:
   containers:
   - name: web-app
-    image: nginx:1.24
+    image: nginx:1.28.3-alpine
     resources: {}
 
 # Sidecar container
   - name: logging-sidecar
-    image: busybox:1.28
+    image: busybox:1.36
     command: ['sh', '-c', "while true; do echo sync logs; sleep 20; done"]
     resources: {}
