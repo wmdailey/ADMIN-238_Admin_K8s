@@ -22,9 +22,9 @@
 # the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
 # OR CONDITIONS OF ANY KIND, either express or implied.
 
-# Title: clean-taints.sh
+# Title: clean-compute.sh
 # Author: WKD
-# Exercise: 17-02
+# Exercise: 21-04
 # Version: 3.3.0
 
 # DEBUG
@@ -35,7 +35,14 @@
 # VARIABLE
 
 # MAIN
-kubectl label node edu-worker edu-worker2 edu-worker3 disktype-
-kubectl label node edu-worker edu-worker2 edu-worker3 arch-
-
+kubectl -n app01-ns delete pod web01-pod 
+kubectl -n app02-ns delete pod web01-pod web02-pod
+kubectl -n app03-ns delete pod web03-pod web04-pod
+kubectl -n app01-ns delete resourcequota app-quotas
+kubectl -n app02-ns delete resourcequota app-quotas
+kubectl -n app03-ns delete resourcequota app-quotas 
+kubectl -n app03-ns delete limitranges app-limits
+kubectl delete namespaces app01-ns 
+kubectl delete namespaces app02-ns 
+kubectl delete namespaces app03-ns 
 echo "Finished"

@@ -1,5 +1,6 @@
 # Exercise 22-04 v3.3.0
 #
+---
 apiVersion: v1
 kind: Pod
 metadata:

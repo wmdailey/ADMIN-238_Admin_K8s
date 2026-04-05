@@ -35,8 +35,12 @@
 # VARIABLE
 
 # MAIN
-kubectl taint nodes edu-worker edu-worker2 edu-worker3 env=prod:NoSchedule-
+kubectl taint nodes edu-worker edu-worker2 edu-worker3 env=prd:NoSchedule-
 kubectl label node edu-worker edu-worker2 edu-worker3 disktype-
-kubectl label node edu-worker edu-worker2 edu-worker3 arch-
-
+kubectl label node edu-worker edu-worker2 edu-worker3 cpu-
+echo
+kubectl get nodes -o custom-columns=NAME:.metadata.name,TAINTS:.spec.taints
+echo 
+kubectl get nodes --show-labels
+echo
 echo "Finished"
