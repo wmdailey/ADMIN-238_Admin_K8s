@@ -1,0 +1,19 @@
+# Exercise 03-02 v3.2.0
+#
+---
+apiVersion: operator.tigera.io/v1
+kind: Installation
+metadata:
+  name: default
+spec:
+  # Use "None" for self-hosted clusters like kind, Minikube, or bare metal
+  kubernetesProvider: ""
+
+  calicoNetwork:
+    # Setting the CIDR for the IP pool
+    ipPools:
+    - cidr: 10.244.0.0/16 
+      # VXLAN is generally the most compatible encapsulation for kind/Docker clusters
+      encapsulation: VXLAN
+      natOutgoing: Enabled
+      nodeSelector: "all()"
