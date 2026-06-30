@@ -1,0 +1,19 @@
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: vm-ip-pool
+  namespace: metallb-system
+spec:
+  # Replace these IPs with a free range from your local VM network subnet
+  addresses:
+  - 200.0.0.221-200.0.0.231
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: vm-l2-advertisement
+  namespace: metallb-system
+spec:
+  # This ties the advertisement specifically to the pool we created above
+  ipAddressPools:
+  - vm-ip-pool
