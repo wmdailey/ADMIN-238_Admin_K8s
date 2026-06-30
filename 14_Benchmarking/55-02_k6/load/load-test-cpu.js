@@ -1,7 +1,7 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 
-// Exercise 52-02 v3.3.0
+// Exercise 55-02 v3.3.1
 
 // Define the base URL using perf-test 
 const BASE_URL = 'http://perf-test.local:8080';
