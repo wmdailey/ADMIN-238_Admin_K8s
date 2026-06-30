@@ -6,7 +6,7 @@ metadata:
 spec:
   # Replace these IPs with a free range from your local VM network subnet
   addresses:
-  - 200.0.0.221-200.0.0.231
+  - 10.0.0.221-10.0.0.231
 ---
 apiVersion: metallb.io/v1beta1
 kind: L2Advertisement
