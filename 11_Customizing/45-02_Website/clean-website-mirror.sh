@@ -35,7 +35,8 @@
 # VARIABLE
 
 # MAIN
-kubectl delete website webstore-prd 
-kubectl delete crd websites.example.com
+kubectl delete wm cloudera-mirror 
+kubectl delete pod cloudera-mirror 
+kubectl delete crd websitemirrors.stable.example.com  
 
 echo "Finished"
