@@ -22,10 +22,11 @@
 # the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
 # OR CONDITIONS OF ANY KIND, either express or implied.
 
-# Title: clean-databases-crd.sh
+# Title: clean-web-crd.sh
 # Author: WKD
-# Exercise 46-03
-# Version: 3.3.0
+# Exercise 46-02
+# Version: 3.3.1
+# Purpose: Clean out the health probes
 
 # DEBUG
 #set -x
@@ -35,7 +36,9 @@
 # VARIABLE
 
 # MAIN
-kubectl delete db prd-webstore-db 
-kubectl delete crd databases.db.example.com 
+kubectl delete deploy dev-web-deploy prd-web-deploy 
+kubectl delete svc dev-web-svc prd-web-svc 
+rm -rf web
+
 
 echo "Finished"
