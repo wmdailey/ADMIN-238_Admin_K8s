@@ -1,0 +1,7 @@
+/opt/spark/bin/spark-sql \
+  --packages org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.5.0 \
+  --conf spark.sql.extensions=org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions \
+  --conf spark.sql.catalog.k8s_catalog=org.apache.iceberg.spark.SparkCatalog \
+  --conf spark.sql.catalog.k8s_catalog.type=rest \
+  --conf spark.sql.catalog.k8s_catalog.uri=http://apache-polaris.polaris.svc.cluster.local:8181/api/catalog \
+  --conf spark.sql.catalog.k8s_catalog.warehouse=k8s_lakehouse

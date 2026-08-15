@@ -1,0 +1,5 @@
+vault write auth/kubernetes/role/myapp-role \
+    bound_service_account_names=app-sa \
+    bound_service_account_namespaces=default \
+    policies=myapp-policy \
+    ttl=24h

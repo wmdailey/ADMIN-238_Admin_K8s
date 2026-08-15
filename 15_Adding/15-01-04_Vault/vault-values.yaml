@@ -1,0 +1,15 @@
+server: 
+  dev: 
+    enabled: true 
+# Sets up a lightweight 
+# development server 
+# (Unsealed automatically) 
+  ui: 
+    enabled: true 
+# Enables the web-based 
+# graphical user interface 
+injector: 
+   enabled: true 
+# Enables the Vault Agent
+# Injector for mutating 
+# webhooks

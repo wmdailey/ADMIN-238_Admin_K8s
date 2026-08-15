@@ -1,0 +1,7 @@
+# Exercise 37-02 v3.3.0
+#
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: db-ns

@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: secure-app
+  namespace: default
+  labels:
+    app: secure-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: secure-app
+  template:
+    metadata:
+      labels:
+        app: secure-app
+      annotations:
+        # 1. Enable the injector webhook for this pod
+        vault.hashicorp.com/agent-inject: 'true'
+        # 2. Specify the Vault role to authenticate against
+        vault.hashicorp.com/role: 'myapp-role'
+        # 3. Define the path of the secret to inject and its target file destination
+        vault.hashicorp.com/agent-inject-secret-credentials: 'secret/data/myapp/config'
+        # 4. (Optional) Template the file format. By default, it outputs Go-template syntax.
+        vault.hashicorp.com/agent-inject-template-credentials: |
+          {{- with secret "secret/data/myapp/config" -}}
+          DATABASE_USER="{{ .Data.data.username }}"
+          DATABASE_PASS="{{ .Data.data.password }}"
+          {{- end -}}
+    spec:
+      serviceAccountName: app-sa
+      containers:
+      - name: alpine-application
+        image: alpine:latest
+        command: ["/bin/sh", "-c"]
+        # This keeps the container alive and prints the secret contents to prove it works
+        args:
+          - while true; do
+              if [ -f /vault/secrets/credentials ]; then
+                echo "--- Secrets loaded from Vault ---";
+                cat /vault/secrets/credentials;
+              else
+                echo "Waiting for vault secrets...";
+              fi;
+              sleep 10;
+            done

@@ -1,0 +1,48 @@
+# Exercise 56-02 v3.3.1 
+#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web01-deploy
+  namespace: default
+  labels:
+    app: web-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-app
+  template:
+    metadata:
+      labels:
+        app: web-app
+    spec:
+      containers:
+      - name: metrics-app
+        image: prom/busybox:latest
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            while true; do
+              # 1. Generate the dynamic metrics text file
+              echo -e "HTTP/1.1 200 OK\r\nContent-Type: text/plain; version=0.0.4\r\nConnection: close\r\n\r\n# HELP custom_requests_total Total web requests\n# TYPE custom_requests_total counter\ncustom_requests_total $((RANDOM % 100))" > /tmp/metrics.txt;
+
+              # 2. Run netcat to serve the file and immediately release the socket when finished
+              nc -v -l -p 8080 < /tmp/metrics.txt;
+            done
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web01-svc
+  namespace: default
+  labels:
+    app: web-app
+spec:
+  ports:
+  - name: metrics # This label matches the target port definition
+    port: 8080
+    targetPort: 8080
+  selector:
+    app: web-app

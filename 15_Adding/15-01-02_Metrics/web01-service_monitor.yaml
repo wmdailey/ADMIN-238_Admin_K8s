@@ -1,0 +1,21 @@
+# Exercise 56-02 v3.3.1
+# 
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: web01-monitor
+  namespace: monitoring # Must be deployed where the operator can discover it
+  labels:
+    release: monitor-stack # This must match the helm release name used earlier
+spec:
+  selector:
+    matchLabels:
+      app: web-app # Targets the app service label
+  namespaceSelector:
+    matchNames:
+      - default # The namespace where your application runs
+  endpoints:
+  - port: metrics
+    interval: 15s
+    path: /metrics

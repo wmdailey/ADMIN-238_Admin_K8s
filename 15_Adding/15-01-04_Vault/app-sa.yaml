@@ -1,0 +1,8 @@
+# Exercise 56-03 v3.3.1
+#
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: app-sa
+  namespace: default

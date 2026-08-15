@@ -1,0 +1,11 @@
+CREATE NAMESPACE k8s_catalog.production;
+
+CREATE TABLE k8s_catalog.production.sensor_data (
+    sensor_id INT,
+    reading DOUBLE,
+    timestamp TIMESTAMP
+) USING iceberg;
+
+INSERT INTO k8s_catalog.production.sensor_data VALUES (101, 98.6, current_timestamp());
+
+SELECT * FROM k8s_catalog.production.sensor_data;

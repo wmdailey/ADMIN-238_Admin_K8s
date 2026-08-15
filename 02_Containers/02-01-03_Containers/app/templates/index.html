@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Big Data Roles and Teams</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Configure Tailwind to use the Inter font family -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f7f7;
+        }
+    </style>
+</head>
+<body class="min-h-screen antialiased">
+
+    <!-- Header Section -->
+    <header class="bg-indigo-700 shadow-xl py-6 mb-12">
+        <div class="container mx-auto px-4">
+            <!-- Company Logo (static/cloudera_logo.png) -->
+            <div class="flex justify-center mb-4">
+                <!-- Direct reference to the local asset -->
+                <img src="static/cloudera_logo.png" alt="Cloudera Logo" class="h-10 w-auto rounded shadow-md">
+            </div>
+            <!-- End Logo -->
+
+            <h1 class="text-3xl font-bold text-white text-center">
+                The Eight Key Roles in Big Data
+            </h1>
+            <p class="text-indigo-200 text-center mt-2">
+                A collaborative view of the critical players driving data success.
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Content: Roles Grid -->
+    <main class="container mx-auto px-4 pb-12">
+        <!-- Grid Container -->
+        <!-- Responsive grid: 1 column on small, 2 on medium, 4 on large screens -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+
+            <!-- Data Ops Card -->
+            <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition duration-300 ease-in-out border-t-4 border-indigo-500 flex flex-col items-center text-center">
+                <img src="https://placehold.co/100x100/1d4ed8/ffffff/png?text=Data+Ops" alt="Image of a Data Ops Specialist" class="w-24 h-24 rounded-full object-cover mb-4 ring-4 ring-indigo-100">
+                <h2 class="text-xl font-semibold text-gray-900 mb-2">Data Ops</h2>
+                <p class="text-gray-600 text-sm">Ensures the reliability, quality, and automated delivery of data pipelines, bridging the gap between development and operations.</p>
+            </div>
+
+            <!-- Data Engineer Card -->
+            <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition duration-300 ease-in-out border-t-4 border-teal-500 flex flex-col items-center text-center">
+                <img src="https://placehold.co/100x100/047857/ffffff/png?text=Engineer" alt="Image of a Data Engineer" class="w-24 h-24 rounded-full object-cover mb-4 ring-4 ring-teal-100">
+                <h2 class="text-xl font-semibold text-gray-900 mb-2">Data Engineer</h2>
+                <p class="text-gray-600 text-sm">Designs, builds, and maintains the large-scale data processing systems and databases required for analytics and ML.</p>
+            </div>
+
+            <!-- ML Engineer Card -->
+            <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition duration-300 ease-in-out border-t-4 border-pink-500 flex flex-col items-center text-center">
+                <img src="https://placehold.co/100x100/be185d/ffffff/png?text=ML+Engineer" alt="Image of a Machine Learning Engineer" class="w-24 h-24 rounded-full object-cover mb-4 ring-4 ring-pink-100">
+                <h2 class="text-xl font-semibold text-gray-900 mb-2">ML Engineer</h2>
+                <p class="text-gray-600 text-sm">Focuses on deploying and maintaining machine learning models in production environments, ensuring scalability and performance.</p>
+            </div>
+
+            <!-- Data Scientist Card (Added as the 8th role) -->
+            <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition duration-300 ease-in-out border-t-4 border-purple-500 flex flex-col items-center text-center">
+                <img src="https://placehold.co/100x100/9333ea/ffffff/png?text=Scientist" alt="Image of a Data Scientist" class="w-24 h-24 rounded-full object-cover mb-4 ring-4 ring-purple-100">
+                <h2 class="text-xl font-semibold text-gray-900 mb-2">Data Scientist</h2>
+                <p class="text-gray-600 text-sm">Analyzes complex datasets to extract insights, create predictive models, and guide strategic decision-making.</p>
+            </div>
+
+            <!-- Applications Developer Card -->
+            <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition duration-300 ease-in-out border-t-4 border-yellow-500 flex flex-col items-center text-center">
+                <img src="https://placehold.co/100x100/f59e0b/000000/png?text=Developer" alt="Image of an Applications Developer" class="w-24 h-24 rounded-full object-cover mb-4 ring-4 ring-yellow-100">
+                <h2 class="text-xl font-semibold text-gray-900 mb-2">Apps Developer</h2>
+                <p class="text-gray-600 text-sm">Builds user-facing applications that consume the insights and processed data delivered by the data platform.</p>
+            </div>
+
+            <!-- Administrator Card -->
+            <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition duration-300 ease-in-out border-t-4 border-red-500 flex flex-col items-center text-center">
+                <img src="https://placehold.co/100x100/ef4444/ffffff/png?text=Admin" alt="Image of an Administrator" class="w-24 h-24 rounded-full object-cover mb-4 ring-4 ring-red-100">
+                <h2 class="text-xl font-semibold text-gray-900 mb-2">Administrator</h2>
+                <p class="text-gray-600 text-sm">Manages and maintains the infrastructure, security, and access controls for the big data environment and related tools.</p>
+            </div>
+
+            <!-- Architect Card -->
+            <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition duration-300 ease-in-out border-t-4 border-blue-500 flex flex-col items-center text-center">
+                <img src="https://placehold.co/100x100/3b82f6/ffffff/png?text=Architect" alt="Image of an Architect" class="w-24 h-24 rounded-full object-cover mb-4 ring-4 ring-blue-100">
+                <h2 class="text-xl font-semibold text-gray-900 mb-2">Architect</h2>
+                <p class="text-gray-600 text-sm">Defines the overall structure, technologies, and standards for the entire big data ecosystem to meet business needs.</p>
+            </div>
+
+            <!-- Data Governance Card -->
+            <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition duration-300 ease-in-out border-t-4 border-gray-500 flex flex-col items-center text-center">
+                <img src="https://placehold.co/100x100/6b7280/ffffff/png?text=Governance" alt="Image of a Data Governance Specialist" class="w-24 h-24 rounded-full object-cover mb-4 ring-4 ring-gray-100">
+                <h2 class="text-xl font-semibold text-gray-900 mb-2">Data Governance</h2>
+                <p class="text-gray-600 text-sm">Establishes policies and procedures for data handling, compliance, quality, and ethical use across the organization.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-12 py-4 bg-gray-800 text-white text-center">
+        <p class="text-sm">&copy; 2025 Big Data Team Structure. All Rights Reserved.</p>
+    </footer>
+
+</body>
+</html>

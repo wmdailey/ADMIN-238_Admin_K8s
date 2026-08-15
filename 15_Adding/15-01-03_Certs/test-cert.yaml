@@ -1,0 +1,23 @@
+# Exercise 56-03 v3.3.1
+#
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: test-domain-cert
+  namespace: cert-manager-test
+spec:
+  # The name of the Kubernetes Secret where cert-manager will save the certificate files
+  secretName: test-domain-tls-secret
+  duration: 2160h # 90 days
+  renewBefore: 360h # 15 days before expiry
+  subject:
+    organizations:
+      - Test DevOps Org
+  commonName: my-test-app.local
+  dnsNames:
+    - my-test-app.local
+    - www.my-test-app.local
+  issuerRef:
+    name: test-selfsigned-issuer
+    kind: Issuer

@@ -1,0 +1,10 @@
+# Exercise v3.3.1
+#
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: test-selfsigned-issuer
+  namespace: cert-manager-test
+spec:
+  selfSigned: {} # Instructs cert-manager to sign its own certs for testing

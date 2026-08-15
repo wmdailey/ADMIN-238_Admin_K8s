@@ -1,0 +1,6 @@
+apiVersion: stable.example.com/v1
+kind: WebsiteMirror
+metadata:
+  name: cloudera-mirror
+spec:
+  targetUrl: "https://www.cloudera.com"

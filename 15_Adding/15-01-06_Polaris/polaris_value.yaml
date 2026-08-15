@@ -1,0 +1,23 @@
+# Exercise v3.3.1
+# values.yaml
+replicaCount: 2
+
+polaris:
+  bootstrap: true
+  config:
+    # Use standard in-memory for testing, swap to JDBC for prod
+    metaStoreManager:
+      type: in-memory
+
+service:
+  type: ClusterIP
+  port: 8181
+
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: polaris.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
